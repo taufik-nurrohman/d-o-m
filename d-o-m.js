@@ -188,8 +188,8 @@
     }
 
     function el(em, node, attr) {
-        em = em || 'div';
-        em = is_string(em) ? doc.createElement(em) : em;
+        em = trim(em || 'div');
+        em = is_string(em) ? (em[0] === '<' ? (f = doc.createDocumentFragment(), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
         if (is_object(attr)) {
             for (i in attr) {
                 v = attr[i];
@@ -510,9 +510,7 @@
         if (is_string(target) && count(target)) {
             target = trim(target);
             if (target[0] === '<' && /^<.*?>$/.test(target)) {
-                f = doc.createDocumentFragment();
-                f.innerHTML = target;
-                target = f.children;
+                target = el(target);
             } else if (/^[#.]?(?:\\.|[\w-]|[^\x00-\xa0])+$/.test(target)) {
                 if (target[0] === '#' && (e = parent.getElementById(target.slice(1)))) {
                     target = [e];
@@ -537,6 +535,24 @@
 
         target.each = function(fn) {
             return each(target, fn);
+        };
+  
+        target.is = function(s) {
+            a = new DOM(s, dom_parent(this[0]));
+            b = count(a);
+            while (--b >= 0 && a[b] !== this[0]) {}
+            return b > -1;
+        };
+  
+        target.filter = function(x) {
+            o = [];
+            for (i = 0, j = count(this); i < j; ++i) {
+                v = new DOM(this[i]);
+                if ((is_string(x) && v.is(x)) || (is_function(x) && x.call(v[0]))) {
+                    o.push(v[0]);
+                }
+            }
+            return new DOM(o);
         };
 
         target.html = function(s) {

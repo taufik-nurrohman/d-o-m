@@ -35,12 +35,16 @@
       <button onclick="$$('h1').event.reset('click');">delete click</button>
     </p>
     <p>
-      <button onclick="console.log($$('h1:first-child').next().css('border', '4px solid red'));">next element of first H1</button>
-      <button onclick="console.log($$('h1').parent().css('border', '4px solid yellow'));">parent element of H1</button>
-      <button onclick="console.log($$('h1').closest('section').css('border', '4px solid green'));">closest <code>section</code> element of H1</button>
+      <button onclick="console.log($$('.h1-a').next().css('border', '4px solid red'));">next element of first <code>h1</code></button>
+      <button onclick="console.log($$('h1').parent().css('border', '4px solid yellow'));">parent element of <code>h1</code></button>
+      <button onclick="console.log($$('h1').closest('section').css('border', '4px solid green'));">closest <code>section</code> element of <code>h1</code></button>
+      <button onclick="console.log($$('div').children().css('border', '1px dashed red'));">children of <code>div</code></button>
     </p>
     <p>
       <button onclick="console.log($$(this).html());">test <code>this</code> scope</button>
+      <button onclick="console.log($$('h1').filter('.h1-a'));">test filter 1</button>
+      <button onclick="console.log($$('h1').filter(function(){return $$(this).text()==='Lorem Ipsum 2'}));">test filter 2</button>
+      <button onclick="alert($$('h1').length);">test <code>h1</code> length</button>
     </p>
   </body>
 </html>
