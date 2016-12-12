@@ -60,7 +60,7 @@
     }
 
     function is_plain_object(x) {
-        return is_object(x) && type(x, 'object');
+        return is_object(x) && !is_dom(x) && type(x, 'object');
     }
 
     function is_array(x) {
@@ -216,7 +216,7 @@
     function extend(a, b) {
         b = b || {};
         for (i in b) {
-            if (is_object(a[i]) && is_object(b[i]) && !is_dom(a[i]) && !is_dom(b[i])) {
+            if (is_plain_object(a[i]) && is_plain_object(b[i])) {
                 a[i] = extend(a[i], b[i]);
             } else {
                 a[i] = b[i];
@@ -875,12 +875,12 @@
                 if (!is_set(c)) {
                     a[b] = [];
                 }
-                d = function(e) {
-                    x = is_function(fn) ? fn(e) : fn;
-                    if (x === false) return event_exit(e);
-                }
-                a[b].push(d);
                 return each(target, function(v) {
+                    d = function(e) {
+                        x = is_function(fn) ? fn.call(v, e) : fn;
+                        if (x === false) return event_exit(e);
+                    }
+                    a[b].push(d);
                     event_set(event, v, d);
                 });
             },
@@ -888,25 +888,23 @@
                 var a = $$.id.f,
                     b = target.id,
                     c = a[b], d;
-                if (fn) {
-                    d = function(e) {
-                        x = is_function(fn) ? fn(e) : fn;
-                        if (x === false) return event_exit(e);
-                    }
-                }
                 return each(target, function(v) {
                     if (!fn) {
-                        each(c, function(f, k) {
+                        each(c, function(f) {
                             event_reset(event, v, f);
                         });
                     } else {
+                        d = function(e) {
+                            x = is_function(fn) ? fn.call(v, e) : fn;
+                            if (x === false) return event_exit(e);
+                        }
                         event_reset(event, v, d);
                     }
                 }), delete (fn ? a[b][d] : a[b]), target;
             },
             fire: function(event, data) {
                 return each(target, function(v) {
-                    event_fire(event, v, data);
+                    event_fire.call(v, event, v, data);
                 });
             },
             x: event_exit

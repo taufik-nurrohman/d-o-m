@@ -49,13 +49,13 @@
       <button onclick="console.log($('h1').parent().css('border','4px solid yellow'));">parent element of <code>h1</code></button>
       <button onclick="console.log($('h1').closest('section').css('border','4px solid green'));">closest <code>section</code> element of <code>h1</code></button>
       <button onclick="console.log($('div').children().css('border','1px dashed red'));">children of <code>div</code></button>
-      <button onclick="console.log($(this).css('font-weight','bold').html());">test <code>this</code> scope</button>
+      <button onclick="$('h1').event.set('click',function(){console.log(this);$(this).css('font-style','italic')});">test <code>this</code> scope of all <code>h1</code> elements</button>
       <button onclick="console.log($('h1').css('color',null).is('.h1-a').css('color','red'));">test filter 1 (apply style to <code>.h1-a</code>) only</button>
       <button onclick="console.log($('h1').css('color',null).is(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2 (apply style to <code>h1</code> elements with class name match to <code>/^h1\-[bc]$/</code>)</button>
       <button onclick="$('*').css(false);">remove inline styles on all elements</button>
       <button onclick="$('a').event.set('click',false);">disable link</button>
       <button onclick="$('a').event.reset('click');">enable link</button>
-      <button onclick="$('a').event.reset('click').event.set('click',function(){return window.open('','my-window','width=200,height=100'),false});">new window link</button>
+      <button onclick="$('a').event.reset('click').event.set('click',function(){console.log(this);return window.open('','my-window','width=200,height=100'),false});">new window link</button>
       <button onclick="alert($('li').length);">test <code>li</code> length</button>
       <button onclick="$('li').css(false).first().css('color','red');">get first <code>li</code></button>
       <button onclick="$('li').css(false).last().css('color','red');">get last <code>li</code></button>
