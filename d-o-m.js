@@ -219,7 +219,7 @@
 
     function el(em, node, attr) {
         em = trim(em || 'div');
-        em = is_string(em) ? (em[0] === '<' ? (f = doc.createDocumentFragment(), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
+        em = is_string(em) ? (em[0] === '<' ? (f = doc.createElement('div'), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
         if (is_object(attr)) {
             for (i in attr) {
                 v = attr[i];
@@ -496,6 +496,46 @@
         return i;
     }
 
+    function dom_before(node, dom) {
+        p = dom_parent(node);
+        if (!p) return;
+        p.insertBefore(dom, node);
+    }
+
+    function dom_after(node, dom) {
+        p = dom_parent(node);
+        if (!p) return;
+        p.insertBefore(dom, dom_next(node));
+    }
+
+    function dom_begin(node, dom) {
+        c = dom_children(node)[0];
+        if (c) {
+            dom_before(c, dom);
+        } else {
+            dom_set(node, dom);
+        }
+    }
+
+    function dom_end(node, dom) {
+        dom_set(node, dom);
+    }
+
+    function dom_set(node, dom) {
+        node.appendChild(dom);
+    }
+
+    function dom_reset(node, deep) {
+        var parent = dom_exist(node);
+        if (parent) {
+            if (!is_set(deep) || deep) {
+                c = dom_children(node)[0];
+                while (c) dom_reset(c);
+            }
+            parent.removeChild(node);
+        }
+    }
+
     function dom_copy(node, deep) {
         return node.cloneNode(!is_set(deep) ? true : !!deep);
     }
@@ -572,7 +612,12 @@
                 } else if (target === 'body') {
                     target = [body];
                 } else if (target[0] === '<' && /^<.*?>$/.test(target)) {
-                    target = el(target);
+                    target = [el(target)];
+                    /*
+                    if (is_set(scope) && scope instanceof Object) {
+                        target = [el(target[0], false, scope)];
+                    }
+                    */
                 } else if (/^[#.]?(?:\\.|[\w-]|[^\x00-\xa0])+$/.test(target)) {
                     if (target[0] === '#' && (e = scope.getElementById(target.slice(1)))) {
                         target = [e];
