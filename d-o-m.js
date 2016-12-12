@@ -1,6 +1,17 @@
-(function(win, doc) {
+/*! <https://github.com/tovic/d-o-m> */
 
-    var replace = 'replace', DOM,
+(function(win, doc, DOM_NS) {
+
+    var replace = 'replace',
+        ge = 'getElement',
+        gebi = ge + 'ById',
+        gebc = ge + 'sByClassName',
+        gebt = ge + 'sByTagName',
+        qsa = 'querySelectorAll',
+        attributes = 'attributes',
+        DOM,
+        DOM_NS_0 = DOM_NS[0],
+        DOM_NS_1 = DOM_NS[1] || DOM_NS_0,
 
         a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 
@@ -24,6 +35,10 @@
         return count(object_keys(x));
     }
 
+    function type(node, s) {
+        return to_lower_case(str(node)) === '[object ' + s + ']';
+    }
+
     function is_set(x) {
         return typeof x !== "undefined";
     }
@@ -42,6 +57,10 @@
 
     function is_object(x) {
         return typeof x === "object";
+    }
+
+    function is_plain_object(x) {
+        return is_object(x) && type(x, 'object');
     }
 
     function is_array(x) {
@@ -89,11 +108,11 @@
     }
 
     function uid(s) {
-        return s + Math.floor(Date.now() * Math.random());
+        return (s || "") + Math.floor(Date.now() * Math.random());
     }
 
-    function str_split(s) {
-        return is_string(s) ? trim(s).split(/\s+/) : s;
+    function str_split(s, f) {
+        return is_string(s) ? trim(s).split(is_set(f) ? f : /\s+/) : s;
     }
 
     function str_join(s, f) {
@@ -101,11 +120,33 @@
     }
 
     function arr(x) {
-        return Array.prototype.slice.call(x);
+        var o = [];
+        return each(x, function(v) {
+            v && o.push(is_plain_object(v) ? arr(v) : v);
+        }), o;
     }
 
-    function int(x, i) {
-        return parseInt(x, is_set(i) ? i : 10);
+    function arr_unique(a) {
+        var o = [];
+        for (i = 0, j = count(a); i < j; ++i) {
+            has(o, a[i]) === -1 && o.push(a[i]);
+        }
+        return o;
+    }
+
+    function obj(x) {
+        var o = {};
+        return each(x, function(v, i) {
+            if (is_array(v)) {
+                o[i] = obj(v);
+            } else {
+                o[i] = v;
+            }
+        }), o;
+    }
+
+    function int(x) {
+        return parseFloat(x);
     }
 
     function str(x, i) {
@@ -120,6 +161,10 @@
         return s[replace](/\-([a-z])/g, function(a, b) {
             return to_upper_case(b);
         });
+    }
+
+    function pascalize(s) {
+        return camelize('-' + s);
     }
 
     function dasherize(s) {
@@ -220,7 +265,7 @@
     function el(em, node, attr) {
         em = trim(em || 'div');
         em = is_string(em) ? (em[0] === '<' ? (f = doc.createElement('div'), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
-        if (is_object(attr)) {
+        if (is_plain_object(attr)) {
             for (i in attr) {
                 v = attr[i];
                 if (i === 'classes') {
@@ -283,13 +328,13 @@
     }
 
     function attr_get(node, a, b) {
+        var o = {};
         if (!a) {
-            o = {};
             for (i = 0, j = node.attributes, k = count(j); i < k; ++i) {
                 l = j[i];
                 o[l.name] = l.value;
             }
-            return count_object(o) ? o : (is_set(b) ? b : {});
+            return count_object(o) ? (is_plain_object(b) ? extend(b, o) : o) : (is_set(b) ? b : {});
         }
         if (is_string(a)) {
             return attr_get(node, [a], [is_set(b) ? b : ""])[0];
@@ -332,15 +377,16 @@
     }
 
     function data_get(node, a, b) {
+        var o = {};
         if (!a) {
-            o = {};
-            for (i = 0, j = node.attributes, k = count(j); i < k; ++i) {
+            for (i = 0, j = node[attributes], k = count(j); i < k; ++i) {
                 l = j[i];
-                if (l.name.slice(0, 5) === 'data-') {
-                    o[l.name] = l.value;
+                m = l.name;
+                if (m.slice(0, 5) === 'data-') {
+                    o[m.slice(5)] = l.value;
                 }
             }
-            return count_object(o) ? o : (is_set(b) ? b : {});
+            return count_object(o) ? (is_plain_object(b) ? extend(b, o) : o) : (is_set(b) ? b : {});
         }
         if (is_string(a)) {
             return data_get(node, [a], [is_set(b) ? b : ""])[0];
@@ -362,9 +408,9 @@
             }
         } else {
             if (!is_set(a)) {
-                for (i = 0, j = node.attributes, k = count(j); i < k; ++i) {
-                    if (j[i] && j[i].name.slice(0, 5) === 'data-') {
-                        attr_reset(node, j[i].name);
+                for (i = 0, j = node[attributes], k = count(j); i < k; ++i) {
+                    if ((l = j[i]) && l.name.slice(0, 5) === 'data-') {
+                        attr_reset(node, l.name);
                     }
                 }
             } else {
@@ -381,6 +427,7 @@
     }
 
     function class_get(node, s, b) {
+        var o = [];
         if (!s) {
             o = str_split(node.className);
             return count(o) ? o : (is_set(b) ? b : []);
@@ -388,7 +435,6 @@
         if (is_string(s)) {
             return class_get(node, [s], [is_set(b) ? b : ""])[0];
         }
-        o = [];
         for (i in s) {
             i = s[i];
             if (node.classList.contains(i)) {
@@ -509,7 +555,7 @@
     }
 
     function dom_begin(node, dom) {
-        c = dom_children(node)[0];
+        c = node.firstChild;
         if (c) {
             dom_before(c, dom);
         } else {
@@ -526,10 +572,10 @@
     }
 
     function dom_reset(node, deep) {
-        var parent = dom_exist(node);
+        var parent = dom_parent(node);
         if (parent) {
             if (!is_set(deep) || deep) {
-                c = dom_children(node)[0];
+                c = node.firstChild;
                 while (c) dom_reset(c);
             }
             parent.removeChild(node);
@@ -545,6 +591,10 @@
         return s;
     }
 
+    function do_instance(a, b) {
+        return new DOM(a, b);
+    }
+
     (function($, $$) {
 
         $.version = '1.0.0';
@@ -555,9 +605,17 @@
         };
 
         $.edge = edge;
+        $.el = el;
         $.extend = extend;
         $.has = has;
-        $.trim = trim;
+        extend($.trim = trim, {
+            begin: function(s) {
+                return trim(s, 0);
+            },
+            end: function(s) {
+                return trim(s, 1);
+            }
+        });
 
         $.is = {
             a: is_array,
@@ -576,27 +634,43 @@
             }
         };
 
+        extend($.is.o, {
+            o: is_plain_object
+        });
+
         $.to = {
             a: arr,
             i: int,
+            o: obj,
             r: pattern,
             s: str
         };
-    
+
+        extend($.to.a, {
+            u: arr_unique
+        });
+
+        extend($.to.s, {
+            c: camelize,
+            d: dasherize,
+            p: pascalize
+        });
+
         // current script path
         s = doc.currentScript;
         $.path = ((s && s.src) || win.location.href).split('/').slice(0, -1).join('/');
 
-    })(win.$ = win.DOM = function(target, scope) {
+    })(win[DOM_NS_0] = win[DOM_NS_1] = function(target, scope) {
 
-        return new DOM(target, scope);
+        return do_instance(target, scope);
 
     }, DOM = function(target, scope) {
 
         var $ = this,
-            $$ = win.DOM;
+            $$ = win[DOM_NS_1];
 
         function query(target, scope) {
+            if (target instanceof $$) return target;
             var html = doc.documentElement,
                 head = doc.head,
                 body = doc.body,
@@ -611,30 +685,25 @@
                     target = [head];
                 } else if (target === 'body') {
                     target = [body];
-                } else if (target[0] === '<' && /^<.*?>$/.test(target)) {
-                    target = [el(target)];
-                    /*
-                    if (is_set(scope) && scope instanceof Object) {
-                        target = [el(target[0], false, scope)];
-                    }
-                    */
+                } else if (target[0] === '<' && target.slice(-1) === '>') {
+                    target = [el(target, false, scope_o)];
                 } else if (/^[#.]?(?:\\.|[\w-]|[^\x00-\xa0])+$/.test(target)) {
-                    if (target[0] === '#' && (e = scope.getElementById(target.slice(1)))) {
+                    if (target[0] === '#' && (e = scope[gebi](target.slice(1)))) {
                         target = [e];
-                    } else if ((target[0] === '.' && count(e = scope.getElementsByClassName(target.slice(1)))) || count(e = scope.getElementsByTagName(target))) {
+                    } else if ((target[0] === '.' && count(e = scope[gebc](target.slice(1)))) || count(e = scope[gebt](target))) {
                         target = e;
                     } else {
                         target = [];
                     }
                 } else {
-                    target = scope.querySelectorAll(target) || [];
+                    target = scope[qsa](target);
                 }
             } else if (is_dom(target)) {
                 target = [target];
             } else if (!target) {
                 target = [];
             }
-            target = arr(target);
+            target = Array.prototype.slice.call(target);
             target.$ = [target_o, scope_o || 0];
             return target;
         }
@@ -651,22 +720,19 @@
         target.each = function(fn) {
             return each(target, fn);
         };
-  
+
         target.is = function(s, f) {
+            f = is_set(f) ? f : [];
+            if (is_function(s)) {
+                var o = [];
+                each(target, function(v, i, a) {
+                    s.call(v, i, a) && o.push(v);
+                });
+                return do_instance(count(o) ? o : f);
+            }
             a = dom_parent(target[0]);
             b = query(s, a)[0];
-            return b || (is_set(f) ? f : false);
-        };
-  
-        target.filter = function(x) {
-            if (is_function(x)) {
-                var o = [];
-                each(target, function(v) {
-                    x.call(v) && o.push(v);
-                });
-                return new DOM(o);
-            }
-            return new DOM(target.is(x));
+            return do_instance(b || f);
         };
 
         target.html = function(s) {
@@ -687,19 +753,36 @@
             });
         };
 
+        var prop_aliases = {
+            'class': 'className',
+            'readonly': 'readOnly',
+            'disable': 'disabled',
+            'hide': 'hidden',
+            'select': 'selected',
+            'tabindex': 'tabIndex',
+            'read-only': 'readOnly',
+            'spell-check': 'spellcheck',
+            'tab-index': 'tabIndex'
+        };
+
+        function prop(s) {
+            return prop_aliases(s) || s;
+        }
+
         target.set = function(a, b) {
             return each(target, function(v) {
-                v[a] = b;
+                v[prop(a)] = b;
             });
         };
 
         target.reset = function(a, b) {
             return each(target, function(v) {
-                delete v[a];
+                delete v[prop(a)];
             });
         };
 
         target.get = function(a, b) {
+            a = prop(a);
             return is_set(target[0][a]) ? target[0][a] : (is_set(b) ? b : false);
         };
 
@@ -786,26 +869,40 @@
 
         target.event = {
             set: function(event, fn) {
-                if (!is_set($$.id.f[target.id])) {
-                    $$.id.f[target.id] = [];
+                var a = $$.id.f,
+                    b = target.id,
+                    c = a[b], d;
+                if (!is_set(c)) {
+                    a[b] = [];
                 }
-                $$.id.f[target.id].push(fn);
+                d = function(e) {
+                    x = is_function(fn) ? fn(e) : fn;
+                    if (x === false) return event_exit(e);
+                }
+                a[b].push(d);
                 return each(target, function(v) {
-                    event_set(event, v, fn);
+                    event_set(event, v, d);
                 });
             },
             reset: function(event, fn) {
                 var a = $$.id.f,
-                    b = a[target.id];
+                    b = target.id,
+                    c = a[b], d;
+                if (fn) {
+                    d = function(e) {
+                        x = is_function(fn) ? fn(e) : fn;
+                        if (x === false) return event_exit(e);
+                    }
+                }
                 return each(target, function(v) {
                     if (!fn) {
-                        each(b, function(f, k) {
+                        each(c, function(f, k) {
                             event_reset(event, v, f);
                         });
                     } else {
-                        event_reset(event, v, fn);
+                        event_reset(event, v, d);
                     }
-                }), delete a[target.id], target;
+                }), delete (fn ? a[b][d] : a[b]), target;
             },
             fire: function(event, data) {
                 return each(target, function(v) {
@@ -817,33 +914,65 @@
 
         target.index = function(i) {
             if (is_set(i)) {
-                return new DOM(target[i]);
+                return do_instance(target[i]);
             }
             return dom_index(target[0]);
         };
 
+        target.first = function() {
+            return do_instance(target[0]);
+        };
+
+        target.last = function() {
+            return do_instance(target.pop());
+        };
+
         target.parent = function() {
-            return new DOM(dom_parent(target[0]));
+            return do_instance(dom_parent(target[0]));
         };
 
         target.children = function() {
-            return new DOM(dom_children(target[0]));
+            return do_instance(dom_children(target[0]));
         };
 
         target.closest = function(s) {
-            return new DOM(dom_closest(target[0], s));
+            return do_instance(dom_closest(target[0], s));
         };
 
         target.next = function() {
-            return new DOM(dom_next(target[0]));
+            return do_instance(dom_next(target[0]));
         };
 
         target.previous = function() {
-            return new DOM(dom_previous(target[0]));
+            return do_instance(dom_previous(target[0]));
+        };
+
+        target.begin = function(s) {
+            return each(target, function(v) {
+                dom_begin(v, el(s));
+            });
+        };
+
+        target.end = function(s) {
+            return each(target, function(v) {
+                dom_end(v, el(s));
+            });
+        };
+
+        target.before = function(s) {
+            return each(target, function(v) {
+                dom_before(v, el(s));
+            });
+        };
+
+        target.after = function(s) {
+            return each(target, function(v) {
+                dom_after(v, el(s));
+            });
         };
 
         return target;
 
     });
 
-})(window, document);
+})(window, document, ['$', 'DOM']);
