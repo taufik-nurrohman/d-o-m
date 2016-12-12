@@ -720,6 +720,10 @@
         target.css = function(a, b) {
             if (!is_set(a)) {
                 return css(target[0]);
+            } else if (a === false) {
+                return each(target, function(v) {
+                    attr_reset(v, 'style');
+                });
             }
             if (is_set(b)) {
                 o = {};

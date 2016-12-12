@@ -48,5 +48,8 @@
       <button onclick="console.log($('h1').css('color',null).filter(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2</button>
       <button onclick="alert($('h1').length);">test <code>h1</code> length</button>
     </p>
+    <p>
+      <button onclick="$('*').css(false);">remove inline styles on all elements</button>
+    </p>
   </body>
 </html>
