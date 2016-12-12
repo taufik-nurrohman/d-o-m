@@ -605,13 +605,57 @@
         $.DOM = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // node(s)
-            f: {}  // function(s)
+            f: {}, // function(s)
+            h: {}  // hook(s)
         };
 
         $.edge = edge;
         $.el = el;
         $.extend = extend;
         $.has = has;
+
+        function hook_set(event, fn, id) {
+            o = $.id.h;
+            if (!is_set(event)) return o;
+            if (!is_set(fn)) return o[event];
+            if (!is_set(o[event])) o[event] = {};
+            if (!is_set(id)) id = count_object(o[event]);
+            return o[event][id] = fn, $;
+        }
+
+        function hook_reset(event, id) {
+            o = $.id.h;
+            if (!is_set(event)) return $.id.h = {}, $;
+            if (!is_set(id) || !is_set(o[event])) return o[event] = {}, $;
+            return delete o[event][id], $;
+        }
+
+        function hook_fire(event, a, id) {
+            o = $.id.h;
+            if (!is_set(o[event])) {
+                return o[event] = {}, $;
+            }
+            if (!is_set(id)) {
+                for (i in o[event]) {
+                    o[event][i].apply($, a);
+                }
+            } else {
+                if (is_set(o[event][id])) {
+                    o[event][id].apply($, a);
+                }
+            }
+            return $;
+        }
+
+        extend($.hooks = function(f) {
+            o = $.id.h;
+            return count_object(o) ? (is_plain_object(f) ? extend(f, o) : o) : (is_set(f) ? f : {});
+        }, {
+            set: hook_set,
+            reset: hook_reset,
+            fire: hook_fire
+        });
+
         extend($.trim = trim, {
             begin: function(s) {
                 return trim(s, 0);
@@ -658,6 +702,11 @@
             c: camelize,
             d: dasherize,
             p: pascalize
+        });
+
+        extend($.ajax = function() {}, {
+            get: function() {},
+            post: function() {}
         });
 
         // current script path
@@ -716,7 +765,7 @@
                 target = [];
             }
             target = to_array(target);
-            target.$ = [target_o, scope_o || 0];
+            target.$ = [target_o, scope_o || null];
             return arr_unique(target);
         }
 
@@ -824,11 +873,11 @@
             attributes: function(f) {
                 return attr_get(target[0], 0, f);
             },
-            data: function(f) {
-                return data_get(target[0], 0, f);
-            },
             classes: function(f) {
                 return class_get(target[0], 0, f);
+            },
+            data: function(f) {
+                return data_get(target[0], 0, f);
             },
             events: function() {},
             index: function(i) {

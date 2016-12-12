@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>DOM Library</title>
+    <link href="favicon.ico" rel="shortcut icon">
+    <script src="d-o-m.min.js"></script>
+    <style>
+    html,body {
+      margin:0;
+      padding:0;
+    }
+    body {padding:5%}
+    h1 {margin-top:0}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DOM Library</h1>
+      <p>Just another JavaScript library.</p>
+      <p><a href="d-o-m.html" target="_blank">View Demo</a></p>
+    </header>
+    <section>
+      <h2 id="section:start">Start</h2>
+      <p>Include <a href="d-o-m.min.js"><code>d-o-m.min.js</code></a> to the <code>&lt;head&gt;</code> section. Done.</p>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html dir="ltr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;DOM Library&lt;/title&gt;
+    &lt;script src="d-o-m.min.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script&gt;
+    $.ready(function() {
+        alert('DOM is ready!');
+    });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      <h2 id="section:configure">Configure</h2>
+      <p>Configuration is not available.</p>
+      <h2 id="section:method">Methods</h2>
+      <p>Initialize a <code>DOM</code> instance with <code>$(<var>selector</var>)</code> or <code>DOM(<var>selector</var>)</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
+      <pre><code>$('#foo');</code></pre>
+      <h3 id="section:method-html">.each()</h3>
+      <p>Iterate over a <em>DOM</em> object, executing a function for each matched element.</p>
+      <pre><code>$('.foo').each(function(v, k, a) {
+    // `v` refers to the current array item
+    // `k` refers to the current array index
+    // `a` refers to the array
+});</code></pre>
+      <h3 id="section:method-is">.is()</h3>
+      <p>Reduce the set of matched elements to those that match the selector or pass the function&rsquo;s test.</p>
+      <h3 id="section:method-html">.html()</h3>
+      <p>Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.</p>
+      <pre><code>$('#foo').html(); // get HTML content of `#foo`</code></pre>
+      <pre><code>$('#foo').html('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&lt;b&gt;bar&lt;/b&gt;`</code></pre>
+      <h3 id="section:method-text">.text()</h3>
+      <p>Get the combined text contents of each element in the set of matched elements, including their descendants, or set the text contents of the matched elements.</p>
+      <h3 id="section:method-set">.set()</h3>
+      <p>Set one or more properties for every matched element.</p>
+      <h3 id="section:method-reset">.reset()</h3>
+      <p>Remove a property for the set of matched elements.</p>
+      <h3 id="section:method-get">.get()</h3>
+      <p>Get the value of a property for the first element in the set of matched elements.</p>
+      <h3 id="section:method-attributes">.attributes()</h3>
+      <h4 id="section:method-attributes-set">.attributes.set()</h4>
+      <h4 id="section:method-attributes-reset">.attributes.reset()</h4>
+      <h4 id="section:method-attributes-get">.attributes.get()</h4>
+      <h3 id="section:method-classes">.classes()</h3>
+      <h4 id="section:method-classes-set">.classes.set()</h4>
+      <h4 id="section:method-classes-reset">.classes.reset()</h4>
+      <h4 id="section:method-classes-toggle">.classes.toggle()</h4>
+      <h4 id="section:method-classes-get">.classes.get()</h4>
+      <h3 id="section:method-data">.data()</h3>
+      <h4 id="section:method-data-set">.data.set()</h4>
+      <h4 id="section:method-data-reset">.data.reset()</h4>
+      <h4 id="section:method-data-get">.data.get()</h4>
+      <h3 id="section:method-events">.events()</h3>
+      <h4 id="section:method-events-set">.events.set()</h4>
+      <h4 id="section:method-events-reset">.events.reset()</h4>
+      <h4 id="section:method-events-fire">.events.fire()</h4>
+      <h4 id="section:method-events-x">.events.x()</h4>
+      <h4 id="section:method-events-capture">.events.capture()</h4>
+      <h3 id="section:method-index">.index()</h3>
+      <h3 id="section:method-first">.first()</h3>
+      <h3 id="section:method-last">.last()</h3>
+      <h3 id="section:method-parent">.parent()</h3>
+      <h3 id="section:method-children">.children()</h3>
+      <h3 id="section:method-closest">.closest()</h3>
+      <h3 id="section:method-find">.find()</h3>
+      <h3 id="section:method-next">.next()</h3>
+      <h3 id="section:method-previous">.previous()</h3>
+      <h3 id="section:method-begin">.begin()</h3>
+      <h3 id="section:method-end">.end()</h3>
+      <h3 id="section:method-before">.before()</h3>
+      <h3 id="section:method-after">.after()</h3>
+      <h3 id="section:method-css">.css()</h3>
+      <h2 id="section:property">Properties</h2>
+      <h3 id="section:property-id">.id</h3>
+      <h3 id="section:property-$">.$</h3>
+      <h2 id="section:utility">Utilities</h2>
+    </section>
+    <footer>
+      <p>&copy; 2016 &middot; <a href="">Taufik Nurrohman</a></p>
+    </footer>
+  </body>
+</html>
