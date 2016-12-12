@@ -12,39 +12,41 @@
           <div>
             <h1 class="h1-a">Lorem Ipsum 1</h1>
             <h1 class="h1-b">Lorem Ipsum 2</h1>
+            <h1 class="h1-c">Lorem Ipsum 3</h1>
             <p>Lorem ipsum dolor sit amet.</p>
           </div>
         </section>
       </section>
     </article>
     <p>
-      <button onclick="$$('h1').html('set <code>html</code>');">set <code>html</code></button>
-      <button onclick="$$('h1').text('set <code>text</code>');">set <code>text</code></button>
-      <button onclick="alert($$('h1').html());">get <code>html</code></button>
-      <button onclick="alert($$('h1').text());">get <code>text</code></button>
-      <button onclick="$$('h1').attributes.set('title', 'yo!');">set title</button>
-      <button onclick="alert($$('h1').attributes.get('title'));">get title</button>
-      <button onclick="$$('h1').attributes.reset('title');">reset title</button>
-      <button onclick="$$('h1').data.set('title', 'yo!');">set title data</button>
-      <button onclick="alert($$('h1').data.get('title'));">get title data</button>
-      <button onclick="$$('h1').data.reset('title');">reset title data</button>
-      <button onclick="$$('h1').css('color', 'red');">set red color</button>
-      <button onclick="$$('h1').css({color:'green'});">set green color</button>
-      <button onclick="alert($$('h1').css('color'));">get color</button>
-      <button onclick="$$('h1').event.set('click',function(){alert('test click event')});">click to alert</button>
-      <button onclick="$$('h1').event.reset('click');">delete click</button>
+      <button onclick="$('h1').html('set <code>html</code>');">set <code>html</code></button>
+      <button onclick="$('h1').text('set <code>text</code>');">set <code>text</code></button>
+      <button onclick="alert($('h1').html());">get <code>html</code></button>
+      <button onclick="alert($('h1').text());">get <code>text</code></button>
+      <button onclick="$('h1').attributes.set('title','yo!');">set title</button>
+      <button onclick="alert($('h1').attributes.get('title'));">get title</button>
+      <button onclick="$('h1').attributes.reset('title');">reset title</button>
+      <button onclick="$('h1').data.set('title','yo!');">set title data</button>
+      <button onclick="alert($('h1').data.get('title'));">get title data</button>
+      <button onclick="$('h1').data.reset('title');">reset title data</button>
+      <button onclick="$('h1').css('color','red');">set red color</button>
+      <button onclick="$('h1').css({color:'green'});">set green color</button>
+      <button onclick="alert($('h1').css('color'));">get color</button>
+      <button onclick="$('h1').event.set('click',function(){alert('test click event ' + (new Date()).toLocaleString())});">click to alert</button>
+      <button onclick="$('h1').event.reset('click');">delete click</button>
     </p>
     <p>
-      <button onclick="console.log($$('.h1-a').next().css('border', '4px solid red'));">next element of first <code>h1</code></button>
-      <button onclick="console.log($$('h1').parent().css('border', '4px solid yellow'));">parent element of <code>h1</code></button>
-      <button onclick="console.log($$('h1').closest('section').css('border', '4px solid green'));">closest <code>section</code> element of <code>h1</code></button>
-      <button onclick="console.log($$('div').children().css('border', '1px dashed red'));">children of <code>div</code></button>
+      <button onclick="console.log($('.h1-a').next().css('border', '4px solid red'));">next element of first <code>h1</code></button>
+      <button onclick="console.log($('.h1-b').previous().css('border', '4px solid red'));">previous element of second <code>h1</code></button>
+      <button onclick="console.log($('h1').parent().css('border', '4px solid yellow'));">parent element of <code>h1</code></button>
+      <button onclick="console.log($('h1').closest('section').css('border', '4px solid green'));">closest <code>section</code> element of <code>h1</code></button>
+      <button onclick="console.log($('div').children().css('border', '1px dashed red'));">children of <code>div</code></button>
     </p>
     <p>
-      <button onclick="console.log($$(this).html());">test <code>this</code> scope</button>
-      <button onclick="console.log($$('h1').filter('.h1-a'));">test filter 1</button>
-      <button onclick="console.log($$('h1').filter(function(){return $$(this).text()==='Lorem Ipsum 2'}));">test filter 2</button>
-      <button onclick="alert($$('h1').length);">test <code>h1</code> length</button>
+      <button onclick="console.log($(this).css('font-weight','bold').html());">test <code>this</code> scope</button>
+      <button onclick="console.log($('h1').css('color',null).filter('.h1-a').css('color','red'));">test filter 1</button>
+      <button onclick="console.log($('h1').css('color',null).filter(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2</button>
+      <button onclick="alert($('h1').length);">test <code>h1</code> length</button>
     </p>
   </body>
 </html>
