@@ -980,7 +980,9 @@
 
         extend(target, {
             each: function(fn) {
-                return each(target, fn);
+                return each(target, function(v, k, a) {
+                    fn.call(v, v, k, a);
+                });
             },
             is: function(s, f) {
                 if (!is_set(s)) return target;
@@ -1030,6 +1032,9 @@
                 return each(target, function(v, k, a) {
                     v.textContent = t ? s.call(v, v, k, a) : s;
                 });
+            },
+            copy: function(s) {
+                return do_instance(dom_copy(target[0], s));
             },
             set: function(a, b) {
                 t = is_function(b);

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <ul>
+      <li>red</li>
+      <li>green</li>
+      <li>blue</li>
+      <li>yellow</li>
+    </ul>
+    <script>
+    $('li').click(function() {
+        $(this).text('<b>replaced!</b>');
+    });
+    </script>
+  </body>
+</html>
