@@ -3,6 +3,8 @@
 (function(win, doc, DOM_NS) {
 
     var replace = 'replace',
+        create = 'createElement',
+        first_child = 'firstChild',
         ge = 'getElement',
         gebi = ge + 'ById',
         gebc = ge + 'sByClassName',
@@ -268,7 +270,7 @@
 
     function el(em, node, attr) {
         em = em || 'div';
-        em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' ? (f = doc.createElement('div'), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
+        em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' ? (f = doc[create]('div'), f.innerHTML = em, f[first_child]) : doc[create](em)) : em;
         if (is_plain_object(attr)) {
             for (i in attr) {
                 v = attr[i];
@@ -334,7 +336,7 @@
     function attr_get(node, a, b) {
         var o = {};
         if (!a) {
-            for (i = 0, j = node.attributes, k = count(j); i < k; ++i) {
+            for (i = 0, j = node[attributes], k = count(j); i < k; ++i) {
                 l = j[i];
                 o[l.name] = l.value;
             }
@@ -361,7 +363,7 @@
         } else {
             if (!is_set(a)) {
                 attr_reset(node, 'class'); // :(
-                for (i = 0, j = node.attributes, k = count(j); i < k; ++i) {
+                for (i = 0, j = node[attributes], k = count(j); i < k; ++i) {
                     if (j[i]) attr_reset(node, j[i].name);
                 }
             } else {
@@ -559,7 +561,7 @@
     }
 
     function dom_begin(node, dom) {
-        c = node.firstChild;
+        c = node[first_child];
         if (c) {
             dom_before(c, dom);
         } else {
@@ -579,7 +581,7 @@
         var parent = dom_parent(node);
         if (parent) {
             if (!is_set(deep) || deep) {
-                c = node.firstChild;
+                c = node[first_child];
                 while (c) dom_reset(c);
             }
             parent.removeChild(node);
@@ -613,6 +615,7 @@
         $.el = el;
         $.extend = extend;
         $.has = has;
+        $.plug = {};
 
         function hook_set(event, fn, id) {
             o = $.id.h;
@@ -720,6 +723,164 @@
         $.load = function(fn) {
             return event_set.call(doc, "load", win, fn), $;
         };
+
+        // key maps for the deprecated `KeyboardEvent.keyCode`
+        var keys = {
+            // control
+            3: 'cancel',
+            6: 'help',
+            8: 'backspace',
+            9: 'tab',
+            12: 'clear',
+            13: 'enter',
+            16: 'shift',
+            17: 'control',
+            18: 'alt',
+            19: 'pause',
+            20: 'capslock', // not working on `keypress`
+            27: 'escape',
+            28: 'convert',
+            29: 'nonconvert',
+            30: 'accept',
+            31: 'modechange',
+            33: 'pageup',
+            34: 'pagedown',
+            35: 'end',
+            36: 'home',
+            37: 'arrowleft',
+            38: 'arrowup',
+            39: 'arrowright',
+            40: 'arrowdown',
+            41: 'select',
+            42: 'print',
+            43: 'execute',
+            44: 'printscreen', // works only on `keyup` :(
+            45: 'insert',
+            46: 'delete',
+            91: 'meta', // <https://bugzilla.mozilla.org/show_bug.cgi?id=1232918>
+            93: 'contextmenu',
+            144: 'numlock',
+            145: 'scrolllock',
+            181: 'volumemute',
+            182: 'volumedown',
+            183: 'volumeup',
+            224: 'meta',
+            225: 'altgraph',
+            246: 'attn',
+            247: 'crsel',
+            248: 'exsel',
+            249: 'eraseeof',
+            250: 'play',
+            251: 'zoomout',
+            // num
+            48: ['0', ')'],
+            49: ['1', '!'],
+            50: ['2', '@'],
+            51: ['3', '#'],
+            52: ['4', '$'],
+            53: ['5', '%'],
+            54: ['6', '^'],
+            55: ['7', '&'],
+            56: ['8', '*'],
+            57: ['9', '('],
+            // symbol
+            32: ' ',
+            59: [';', ':'],
+            61: ['=', '+'],
+            173: ['-', '_'],
+            188: [',', '<'],
+            190: ['.', '>'],
+            191: ['/', '?'],
+            192: ['`', '~'],
+            219: ['[', '{'],
+            220: ['\\', '|'],
+            221: [']', '}'],
+            222: ['\'', '"']
+        },
+
+        // key alias(es)
+        keys_alias = {
+            'alternate': 'alt',
+            'option': 'alt',
+            'ctrl': 'control',
+            'cmd': 'control',
+            'command': 'control',
+            'os': 'meta', // <https://bugzilla.mozilla.org/show_bug.cgi?id=1232918>
+            'context': 'contextmenu',
+            'menu': 'contextmenu',
+            'return': 'enter',
+            'ins': 'insert',
+            'del': 'delete',
+            'esc': 'escape',
+            'left': 'arrowleft',
+            'right': 'arrowright',
+            'up': 'arrowup',
+            'down': 'arrowdown',
+            'back': 'backspace',
+            'space': ' ',
+            'plus': '+',
+            'minus': '-'
+        }, i, j;
+
+        // function
+        for (i = 1; i < 25; ++i) {
+            keys[111 + i] = 'f' + i;
+        }
+
+        // alphabet
+        for (i = 65; i < 91; ++i) {
+            keys[i] = to_lower_case(String.fromCharCode(i));
+        }
+
+        // register key(s)
+        $.keys = keys;
+        $.keys_alias = keys_alias;
+
+        // add `KeyboardEvent.DOM` property
+        Object.defineProperty(KeyboardEvent.prototype, DOM_NS_1, {
+            configurable: true,
+            get: function() {
+                // custom `KeyboardEvent.key` for internal use
+                var t = this,
+                    keys = $.keys, // refresh ...
+                    keys_alias = $.keys_alias, // refresh ...
+                    k = t.key ? to_lower_case(t.key) : keys[t.which || t.keyCode];
+                if (is_object(k)) {
+                    k = t.shiftKey ? (k[1] || k[0]) : k[0];
+                }
+                k = to_lower_case(k);
+                function ret(x, y) {
+                    if (is_string(y)) {
+                        y = t[y + 'Key'];
+                    }
+                    if (!x || x === true) {
+                        if (is_boolean(y)) {
+                            return y;
+                        }
+                        return k;
+                    }
+                    if (is_pattern(x)) return y && x.test(k);
+                    return x = to_lower_case(x), y && (keys_alias[x] || x) === k;
+                }
+                return {
+                    key: function(x) {
+                        return ret(x, 1);
+                    },
+                    control: function(x) {
+                        return ret(x, 'ctrl');
+                    },
+                    shift: function(x) {
+                        return ret(x, 'shift');
+                    },
+                    option: function(x) {
+                        return ret(x, 'alt');
+                    },
+                    meta: function(x) {
+                        return ret(x, 'meta');
+                    }
+                };
+            }
+        });
 
     })(win[DOM_NS_0] = win[DOM_NS_1] = function(target, scope) {
 
@@ -835,6 +996,7 @@
                 b = query(s, a)[0];
                 return do_instance(b || f);
             },
+            not: function() {},
             html: function(s) {
                 if (!is_set(s)) {
                     return content_get(target[0]);
@@ -902,6 +1064,7 @@
                 });
                 return do_instance(o).is(s);
             },
+            kin: function() {},
             closest: function(s) {
                 var o = [];
                 each(target, function(v) {
@@ -942,6 +1105,9 @@
                     dom_after(v, el(s));
                 });
             },
+            remove: function() {},
+            wrap: function() {},
+            unwrap: function() {},
             css: function(a, b) {
                 if (!is_set(a)) {
                     return css(target[0]);
@@ -962,6 +1128,21 @@
                 return each(target, function(v) {
                     css(v, o);
                 });
+            },
+            show: function() {},
+            hide: function() {},
+            offset: function() {},
+            width: function() {},
+            height: function() {},
+            value: function() {},
+            focus: function() {
+                t = target[0];
+                return ('focus' in t && t.focus()), target;
+            },
+            select: function() {
+                t = target[0];
+                t.focus();
+                return ('select' in t && t.select()), target;
             }
         });
 
@@ -1072,6 +1253,10 @@
                 });
             }
         });
+
+        for (i in $$.plug) {
+            target[i] = $$.plug[i];
+        }
 
         return target;
 
