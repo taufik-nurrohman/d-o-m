@@ -660,10 +660,10 @@
         });
 
         extend($.trim = trim, {
-            begin: function(s) {
+            before: function(s) {
                 return trim(s, 0);
             },
-            end: function(s) {
+            after: function(s) {
                 return trim(s, 1);
             }
         });
@@ -837,50 +837,46 @@
         $.keys_alias = keys_alias;
 
         // add `KeyboardEvent.DOM` property
-        Object.defineProperty(KeyboardEvent.prototype, DOM_NS_1, {
-            configurable: true,
-            get: function() {
-                // custom `KeyboardEvent.key` for internal use
-                var t = this,
-                    keys = $.keys, // refresh ...
-                    keys_alias = $.keys_alias, // refresh ...
-                    k = t.key ? to_lower_case(t.key) : keys[t.which || t.keyCode];
-                if (is_object(k)) {
-                    k = t.shiftKey ? (k[1] || k[0]) : k[0];
-                }
-                k = to_lower_case(k);
-                function ret(x, y) {
-                    if (is_string(y)) {
-                        y = t[y + 'Key'];
-                    }
-                    if (!x || x === true) {
-                        if (is_boolean(y)) {
-                            return y;
-                        }
-                        return k;
-                    }
-                    if (is_pattern(x)) return y && x.test(k);
-                    return x = to_lower_case(x), y && (keys_alias[x] || x) === k;
-                }
-                return {
-                    key: function(x) {
-                        return ret(x, 1);
-                    },
-                    control: function(x) {
-                        return ret(x, 'ctrl');
-                    },
-                    shift: function(x) {
-                        return ret(x, 'shift');
-                    },
-                    option: function(x) {
-                        return ret(x, 'alt');
-                    },
-                    meta: function(x) {
-                        return ret(x, 'meta');
-                    }
-                };
+        $.event = function(e) {
+            // custom `KeyboardEvent.key` for internal use
+            var keys = $.keys, // refresh ...
+                keys_alias = $.keys_alias, // refresh ...
+                k = e.key ? to_lower_case(e.key) : keys[e.which || e.keyCode];
+            if (is_object(k)) {
+                k = e.shiftKey ? (k[1] || k[0]) : k[0];
             }
-        });
+            k = to_lower_case(k || "");
+            function ret(x, y) {
+                if (is_string(y)) {
+                    y = e[y + 'Key'];
+                }
+                if (!x || x === true) {
+                    if (is_boolean(y)) {
+                        return y;
+                    }
+                    return k;
+                }
+                if (is_pattern(x)) return y && x.test(k);
+                return x = to_lower_case(x), y && (keys_alias[x] || x) === k;
+            }
+            return e[DOM_NS_1] = {
+                key: function(x) {
+                    return ret(x, 1);
+                },
+                control: function(x) {
+                    return ret(x, 'ctrl');
+                },
+                shift: function(x) {
+                    return ret(x, 'shift');
+                },
+                option: function(x) {
+                    return ret(x, 'alt');
+                },
+                meta: function(x) {
+                    return ret(x, 'meta');
+                }
+            }, e;
+        };
 
     })(win[DOM_NS_0] = win[DOM_NS_1] = function(target, scope) {
 
@@ -925,9 +921,9 @@
             } else if (!target) {
                 target = [];
             }
-            target = to_array(target);
+            target = arr_unique(to_array(target));
             target.$ = [target_o, scope_o || null];
-            return arr_unique(target);
+            return target;
         }
 
         target = query(target);
@@ -941,6 +937,7 @@
 
         var prop_contenteditable = 'contentEditable',
             prop_designmode = 'designMode',
+            prop_maxlength = 'maxLength',
             prop_nodename = 'nodeName',
             prop_readonly = 'readOnly',
             prop_tabindex = 'tabIndex',
@@ -950,7 +947,9 @@
                 'class': 'className',
                 'designmode': prop_designmode,
                 'disable': 'disabled',
+                'for': 'htmlFor',
                 'hide': 'hidden',
+                'maxlength': prop_maxlength,
                 'nodename': prop_nodename,
                 'readonly': prop_readonly,
                 'select': 'selected',
@@ -958,6 +957,7 @@
                 'content-edit': prop_contenteditable,
                 'content-editable': prop_contenteditable,
                 'design-mode': prop_designmode,
+                'max-length': prop_maxlength,
                 'node-name': prop_nodename,
                 'read-only': prop_readonly,
                 'spell-check': 'spellcheck',
@@ -993,10 +993,26 @@
                     return do_instance(count(o) ? o : f);
                 }
                 a = dom_parent(target[0]);
-                b = query(s, a)[0];
+                b = query(s, a);
                 return do_instance(b || f);
             },
-            not: function() {},
+            not: function(s, f) {
+                if (!is_set(s)) return do_instance([]);
+                f = is_set(f) ? f : [];
+                if (is_function(s)) {
+                    var o = [];
+                    each(target, function(v, i, a) {
+                        !s.call(v, i, a) && o.push(v);
+                    });
+                    return do_instance(count(o) ? o : f);
+                }
+                a = dom_parent(target[0]);
+                b = query(':not(' + s + ')', a);
+                return do_instance(b || f);
+            },
+            range: function(a, b) {
+                return do_instance(target.slice(a, b));
+            },
             html: function(s) {
                 if (!is_set(s)) {
                     return content_get(target[0]);
@@ -1064,7 +1080,14 @@
                 });
                 return do_instance(o).is(s);
             },
-            kin: function() {},
+            kin: function(s) {
+                var o = [],
+                    t = target[0];
+                each(target.parent().children().is(s), function(v) {
+                    v !== t && o.push(v);
+                });
+                return do_instance(o);
+            },
             closest: function(s) {
                 var o = [];
                 each(target, function(v) {
@@ -1151,14 +1174,35 @@
                     });
                 });
             },
-            offset: function() {},
-            width: function(o) {
-                if (o) return target[0].offsetWidth;
-                return css(target[0], 'width');
+            offset: function(o) {
+                t = target[0];
+                if (!t) return {};
+                x = t.offsetLeft;
+                y = t.offsetTop;
+                if (o) {
+                    while (t = t.offsetParent) {
+                        x += t.offsetLeft;
+                        y += t.offsetTop;
+                    }
+                }
+                return {
+                    x: x,
+                    y: y
+                };
             },
-            height: function(o) {
-                if (o) return target[0].offsetHeight;
-                return css(target[0], 'height');
+            size: function(o) {
+                t = target[0];
+                if (!t) return {};
+                if (o) {
+                    return {
+                        x: t.offsetWidth,
+                        y: t.offsetHeight
+                    };
+                }
+                return (o = css(t, ['width', 'height'])) && {
+                    x: o[0],
+                    y: o[1]
+                };
             },
             value: function(a) {
                 if (!is_set(a)) {
@@ -1171,11 +1215,11 @@
             }
         });
 
-        each(['click', 'focus', 'select'], function(e) {
+        each(["click", "focus", "blur", "select", "submit"], function(e) {
             target[e] = function(fn) {
                 if (!is_set(fn)) {
                     return each(target, function(v) {
-                        is_function(v[e]) && v[e]();
+                        event_fire(e, v, []);
                     });
                 }
                 return target.events.set(e, fn);
@@ -1249,6 +1293,7 @@
                 }
                 return each(target, function(v) {
                     d = function(e) {
+                        e = $$.event(e);
                         x = is_function(fn) ? fn.call(v, e) : fn;
                         if (x === false) return event_exit(e);
                     }
@@ -1282,6 +1327,7 @@
             x: event_exit,
             capture: function(event, get, fn) {
                 return target.events.set(event, function(e) {
+                    e = $$.event(e);
                     t = query(get, this);
                     if (has(t, e.target) !== -1 || (u = do_instance(e.target)) && has(t, u.closest(get)[0]) !== -1) {
                         return fn.call(t, e);
