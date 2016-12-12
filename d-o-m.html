@@ -71,7 +71,7 @@
     </p>
     <script>
     $('ul').events.capture('click', 'li.can-add', function() {
-        $(this).parent().end('<li class="can-add">other clickable <code>li</code> elements&hellip;</li>');
+        $(this).parent().append('<li class="can-add">other clickable <code>li</code> elements&hellip;</li>');
     });
     </script>
   </body>

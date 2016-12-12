@@ -922,12 +922,12 @@
             previous: function(s) {
                 return do_instance(dom_previous(target[0])).is(s);
             },
-            begin: function(s) {
+            prepend: function(s) {
                 return each(target, function(v) {
                     dom_begin(v, el(s));
                 });
             },
-            end: function(s) {
+            append: function(s) {
                 return each(target, function(v) {
                     dom_end(v, el(s));
                 });
