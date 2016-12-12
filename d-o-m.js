@@ -1129,21 +1129,57 @@
                     css(v, o);
                 });
             },
-            show: function() {},
-            hide: function() {},
-            offset: function() {},
-            width: function() {},
-            height: function() {},
-            value: function() {},
-            focus: function() {
-                t = target[0];
-                return ('focus' in t && t.focus()), target;
+            show: function() {
+                return each(target, function(v) {
+                    css(v, {
+                        'display': null
+                    });
+                });
             },
-            select: function() {
-                t = target[0];
-                t.focus();
-                return ('select' in t && t.select()), target;
+            hide: function() {
+                return each(target, function(v) {
+                    css(v, {
+                        'display': 'none'
+                    });
+                });
+            },
+            toggle: function() {
+                return each(target, function(v) {
+                    h = v.style.display === 'none' || css(v, 'display') === 'none';
+                    css(v, {
+                        'display': h ? null : 'none'
+                    });
+                });
+            },
+            offset: function() {},
+            width: function(o) {
+                if (o) return target[0].offsetWidth;
+                return css(target[0], 'width');
+            },
+            height: function(o) {
+                if (o) return target[0].offsetHeight;
+                return css(target[0], 'height');
+            },
+            value: function(a) {
+                if (!is_set(a)) {
+                    return target[0].value;
+                }
+                t = is_function(a);
+                return each(target, function(v, k, s) {
+                    v.value = t ? a.call(v, v, k, s) : a;
+                });
             }
+        });
+
+        each(['click', 'focus', 'select'], function(e) {
+            target[e] = function(fn) {
+                if (!is_set(fn)) {
+                    return each(target, function(v) {
+                        is_function(v[e]) && v[e]();
+                    });
+                }
+                return target.events.set(e, fn);
+            };
         });
 
         extend(target.attributes, {
