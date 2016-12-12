@@ -263,8 +263,8 @@
     }
 
     function el(em, node, attr) {
-        em = trim(em || 'div');
-        em = is_string(em) ? (em[0] === '<' ? (f = doc.createElement('div'), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
+        em = em || 'div';
+        em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' ? (f = doc.createElement('div'), f.innerHTML = em, f.firstChild) : doc.createElement(em)) : em;
         if (is_plain_object(attr)) {
             for (i in attr) {
                 v = attr[i];
@@ -739,8 +739,9 @@
             if (!is_set(s)) {
                 return content_get(target[0]);
             }
-            return each(target, function(v) {
-                content_set(v, s);
+            t = is_function(s);
+            return each(target, function(v, k, a) {
+                content_set(v, t ? s.call(v, v, k, a) : s);
             });
         };
 
@@ -748,16 +749,18 @@
             if (!is_set(s)) {
                 return target[0].textContent;
             }
-            return each(target, function(v) {
-                v.textContent = s;
+            t = is_function(s);
+            return each(target, function(v, k, a) {
+                v.textContent = t ? s.call(v, v, k, a) : s;
             });
         };
 
         var prop_aliases = {
+            'check': 'checked',
             'class': 'className',
-            'readonly': 'readOnly',
             'disable': 'disabled',
             'hide': 'hidden',
+            'readonly': 'readOnly',
             'select': 'selected',
             'tabindex': 'tabIndex',
             'read-only': 'readOnly',
@@ -766,18 +769,31 @@
         };
 
         function prop(s) {
-            return prop_aliases(s) || s;
+            return prop_aliases[s] || s;
+        }
+
+        function is_toggle(v) {
+            return v.nodeName && v.type && to_lower_case(v.nodeName) === 'input' && /^(checkbox|radio)$/.test(v.type);
+        }
+
+        function do_fire_toggle(v) {
+            if (is_toggle(v)) {
+                event_fire("change", v, []);
+            }
         }
 
         target.set = function(a, b) {
-            return each(target, function(v) {
-                v[prop(a)] = b;
+            t = is_function(b);
+            return each(target, function(v, k, s) {
+                v[prop(a)] = t ? b.call(v, v, k, s) : b;
+                do_fire_toggle(v);
             });
         };
 
-        target.reset = function(a, b) {
+        target.reset = function(a) {
             return each(target, function(v) {
                 delete v[prop(a)];
+                do_fire_toggle(v);
             });
         };
 
@@ -790,8 +806,9 @@
             return attr_get(target[0], 0, f);
         }, {
             set: function(a, b) {
-                return each(target, function(v) {
-                    attr_set(v, a, b);
+                t = is_function(b);
+                return each(target, function(v, k, s) {
+                    attr_set(v, a, t ? b.call(v, v, k, s) : b);
                 });
             },
             reset: function(a) {
@@ -808,8 +825,9 @@
             return data_get(target[0], 0, f);
         }, {
             set: function(a, b) {
-                return each(target, function(v) {
-                    data_set(v, a, b);
+                t = is_function(b);
+                return each(target, function(v, k, s) {
+                    data_set(v, a, t ? b.call(v, v, k, s) : b);
                 });
             },
             reset: function(a) {
@@ -826,8 +844,9 @@
             return class_get(target[0], 0, f);
         }, {
             set: function(a) {
-                return each(target, function(v) {
-                    class_set(v, a);
+                t = is_function(a);
+                return each(target, function(v, k, s) {
+                    class_set(v, t ? a.call(v, v, k, s) : a);
                 });
             },
             reset: function(a) {
@@ -836,8 +855,9 @@
                 });
             },
             toggle: function(a) {
-                return each(target, function(v) {
-                    class_toggle(v, a);
+                t = is_function(a);
+                return each(target, function(v, k, s) {
+                    class_toggle(v, t ? a.call(v, v, k, s) : a);
                 });
             },
             get: function(a, b) {

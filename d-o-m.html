@@ -24,6 +24,7 @@
               <li>list item 6</li>
               <li>list item 7</li>
             </ul>
+            <p><label><input type="checkbox" onchange="alert('is checked: ' + this.checked)"> test checkbox</label></p>
           </div>
         </section>
       </section>
@@ -55,11 +56,13 @@
       <button onclick="$('*').css(false);">remove inline styles on all elements</button>
       <button onclick="$('a').event.set('click',false);">disable link</button>
       <button onclick="$('a').event.reset('click');">enable link</button>
-      <button onclick="$('a').event.reset('click').event.set('click',function(){console.log(this);return window.open('','my-window','width=200,height=100'),false});">new window link</button>
+      <button onclick="$('a').event.reset('click').event.set('click',function(){console.log(this);return window.open(this.href,'my-window','width=200,height=100'),false});">new window link</button>
       <button onclick="alert($('li').length);">test <code>li</code> length</button>
       <button onclick="$('li').css(false).first().css('color','red');">get first <code>li</code></button>
       <button onclick="$('li').css(false).last().css('color','red');">get last <code>li</code></button>
       <button onclick="$('li').css(false).index(1).css('color','red');">get second <code>li</code></button>
+      <button onclick="$('input[type=checkbox]').set('check', true);">check the <code>input[type=checkbox]</code></button>
+      <button onclick="$('input[type=checkbox]').set('check', false);">uncheck the <code>input[type=checkbox]</code></button>
     </p>
   </body>
 </html>
