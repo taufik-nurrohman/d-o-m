@@ -23,6 +23,10 @@
         return s.toUpperCase();
     }
 
+    function to_array(x) {
+        return Array.prototype.slice.call(x);
+    }
+
     function object_keys(x) {
         return Object.keys(x);
     }
@@ -518,7 +522,7 @@
     }
 
     function dom_children(node) {
-        return node && node.children || [];
+        return node && to_array(node.children || []);
     }
 
     function dom_closest(node, s) {
@@ -660,6 +664,14 @@
         s = doc.currentScript;
         $.path = ((s && s.src) || win.location.href).split('/').slice(0, -1).join('/');
 
+        $.ready = function(fn) {
+            return event_set.call(doc, "DOMContentLoaded", doc, fn), $;
+        };
+
+        $.load = function(fn) {
+            return event_set.call(doc, "load", win, fn), $;
+        };
+
     })(win[DOM_NS_0] = win[DOM_NS_1] = function(target, scope) {
 
         return do_instance(target, scope);
@@ -703,9 +715,9 @@
             } else if (!target) {
                 target = [];
             }
-            target = Array.prototype.slice.call(target);
+            target = to_array(target);
             target.$ = [target_o, scope_o || 0];
-            return target;
+            return arr_unique(target);
         }
 
         target = query(target);
@@ -717,94 +729,194 @@
             $$.id.e[i] = target.$;
         }
 
-        target.each = function(fn) {
-            return each(target, fn);
-        };
-
-        target.is = function(s, f) {
-            f = is_set(f) ? f : [];
-            if (is_function(s)) {
-                var o = [];
-                each(target, function(v, i, a) {
-                    s.call(v, i, a) && o.push(v);
-                });
-                return do_instance(count(o) ? o : f);
-            }
-            a = dom_parent(target[0]);
-            b = query(s, a)[0];
-            return do_instance(b || f);
-        };
-
-        target.html = function(s) {
-            if (!is_set(s)) {
-                return content_get(target[0]);
-            }
-            t = is_function(s);
-            return each(target, function(v, k, a) {
-                content_set(v, t ? s.call(v, v, k, a) : s);
-            });
-        };
-
-        target.text = function(s) {
-            if (!is_set(s)) {
-                return target[0].textContent;
-            }
-            t = is_function(s);
-            return each(target, function(v, k, a) {
-                v.textContent = t ? s.call(v, v, k, a) : s;
-            });
-        };
-
-        var prop_aliases = {
-            'check': 'checked',
-            'class': 'className',
-            'disable': 'disabled',
-            'hide': 'hidden',
-            'readonly': 'readOnly',
-            'select': 'selected',
-            'tabindex': 'tabIndex',
-            'read-only': 'readOnly',
-            'spell-check': 'spellcheck',
-            'tab-index': 'tabIndex'
-        };
+        var prop_contenteditable = 'contentEditable',
+            prop_designmode = 'designMode',
+            prop_nodename = 'nodeName',
+            prop_readonly = 'readOnly',
+            prop_tabindex = 'tabIndex',
+            prop_aliases = {
+                'check': 'checked',
+                'contenteditable': prop_contenteditable,
+                'class': 'className',
+                'designmode': prop_designmode,
+                'disable': 'disabled',
+                'hide': 'hidden',
+                'nodename': prop_nodename,
+                'readonly': prop_readonly,
+                'select': 'selected',
+                'tabindex': prop_tabindex,
+                'content-edit': prop_contenteditable,
+                'content-editable': prop_contenteditable,
+                'design-mode': prop_designmode,
+                'node-name': prop_nodename,
+                'read-only': prop_readonly,
+                'spell-check': 'spellcheck',
+                'tab-index': prop_tabindex
+            };
 
         function prop(s) {
             return prop_aliases[s] || s;
         }
 
-        function is_toggle(v) {
-            return v.nodeName && v.type && to_lower_case(v.nodeName) === 'input' && /^(checkbox|radio)$/.test(v.type);
+        function is_input(v) {
+            return v[prop_nodename] && /^(button|input|select|textarea)$/.test(to_lower_case(v[prop_nodename])) || v[prop_contenteditable];
         }
 
-        function do_fire_toggle(v) {
-            if (is_toggle(v)) {
-                event_fire("change", v, []);
+        function do_fire_input(v) {
+            if (is_input(v)) {
+                event_fire("change input", v, []);
             }
         }
 
-        target.set = function(a, b) {
-            t = is_function(b);
-            return each(target, function(v, k, s) {
-                v[prop(a)] = t ? b.call(v, v, k, s) : b;
-                do_fire_toggle(v);
-            });
-        };
+        extend(target, {
+            each: function(fn) {
+                return each(target, fn);
+            },
+            is: function(s, f) {
+                if (!is_set(s)) return target;
+                f = is_set(f) ? f : [];
+                if (is_function(s)) {
+                    var o = [];
+                    each(target, function(v, i, a) {
+                        s.call(v, i, a) && o.push(v);
+                    });
+                    return do_instance(count(o) ? o : f);
+                }
+                a = dom_parent(target[0]);
+                b = query(s, a)[0];
+                return do_instance(b || f);
+            },
+            html: function(s) {
+                if (!is_set(s)) {
+                    return content_get(target[0]);
+                }
+                t = is_function(s);
+                return each(target, function(v, k, a) {
+                    content_set(v, t ? s.call(v, v, k, a) : s);
+                });
+            },
+            text: function(s) {
+                if (!is_set(s)) {
+                    return target[0].textContent;
+                }
+                t = is_function(s);
+                return each(target, function(v, k, a) {
+                    v.textContent = t ? s.call(v, v, k, a) : s;
+                });
+            },
+            set: function(a, b) {
+                t = is_function(b);
+                return each(target, function(v, k, s) {
+                    v[prop(a)] = t ? b.call(v, v, k, s) : b;
+                    do_fire_input(v);
+                });
+            },
+            reset: function(a) {
+                return each(target, function(v) {
+                    delete v[prop(a)];
+                    do_fire_input(v);
+                });
+            },
+            get: function(a, b) {
+                a = prop(a);
+                return is_set(target[0][a]) ? target[0][a] : (is_set(b) ? b : false);
+            },
+            attributes: function(f) {
+                return attr_get(target[0], 0, f);
+            },
+            data: function(f) {
+                return data_get(target[0], 0, f);
+            },
+            classes: function(f) {
+                return class_get(target[0], 0, f);
+            },
+            events: function() {},
+            index: function(i) {
+                if (is_set(i)) {
+                    return do_instance(target[i]);
+                }
+                return dom_index(target[0]);
+            },
+            first: function() {
+                return do_instance(target[0]);
+            },
+            last: function() {
+                return do_instance(target.pop());
+            },
+            parent: function() {
+                return do_instance(dom_parent(target[0]));
+            },
+            children: function(s) {
+                var o = [];
+                each(target, function(v) {
+                    o = o.concat(dom_children(v));
+                });
+                return do_instance(o).is(s);
+            },
+            closest: function(s) {
+                var o = [];
+                each(target, function(v) {
+                    (t = dom_closest(v, s)) && o.push(t);
+                });
+                return do_instance(o);
+            },
+            find: function(s) {
+                var o = [];
+                each(target, function(v) {
+                    o = o.concat(query(is_set(s) ? s : '*', v))
+                });
+                return do_instance(o);
+            },
+            next: function(s) {
+                return do_instance(dom_next(target[0])).is(s);
+            },
+            previous: function(s) {
+                return do_instance(dom_previous(target[0])).is(s);
+            },
+            begin: function(s) {
+                return each(target, function(v) {
+                    dom_begin(v, el(s));
+                });
+            },
+            end: function(s) {
+                return each(target, function(v) {
+                    dom_end(v, el(s));
+                });
+            },
+            before: function(s) {
+                return each(target, function(v) {
+                    dom_before(v, el(s));
+                });
+            },
+            after: function(s) {
+                return each(target, function(v) {
+                    dom_after(v, el(s));
+                });
+            },
+            css: function(a, b) {
+                if (!is_set(a)) {
+                    return css(target[0]);
+                } else if (a === false) {
+                    return each(target, function(v) {
+                        attr_reset(v, 'style');
+                    });
+                }
+                if (is_set(b)) {
+                    o = {};
+                    o[a] = b;
+                } else {
+                    o = a;
+                }
+                if (is_string(o)) {
+                    return css(target[0], o);
+                }
+                return each(target, function(v) {
+                    css(v, o);
+                });
+            }
+        });
 
-        target.reset = function(a) {
-            return each(target, function(v) {
-                delete v[prop(a)];
-                do_fire_toggle(v);
-            });
-        };
-
-        target.get = function(a, b) {
-            a = prop(a);
-            return is_set(target[0][a]) ? target[0][a] : (is_set(b) ? b : false);
-        };
-
-        extend(target.attributes = function(f) {
-            return attr_get(target[0], 0, f);
-        }, {
+        extend(target.attributes, {
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
@@ -821,9 +933,7 @@
             }
         });
 
-        extend(target.data = function(f) {
-            return data_get(target[0], 0, f);
-        }, {
+        extend(target.data, {
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
@@ -840,9 +950,7 @@
             }
         });
 
-        extend(target.classes = function(f) {
-            return class_get(target[0], 0, f);
-        }, {
+        extend(target.classes, {
             set: function(a) {
                 t = is_function(a);
                 return each(target, function(v, k, s) {
@@ -865,29 +973,7 @@
             }
         });
 
-        target.css = function(a, b) {
-            if (!is_set(a)) {
-                return css(target[0]);
-            } else if (a === false) {
-                return each(target, function(v) {
-                    attr_reset(v, 'style');
-                });
-            }
-            if (is_set(b)) {
-                o = {};
-                o[a] = b;
-            } else {
-                o = a;
-            }
-            if (is_string(o)) {
-                return css(target[0], o);
-            }
-            return each(target, function(v) {
-                css(v, o);
-            });
-        };
-
-        target.event = {
+        extend(target.events, {
             set: function(event, fn) {
                 var a = $$.id.f,
                     b = target.id,
@@ -927,67 +1013,16 @@
                     event_fire.call(v, event, v, data);
                 });
             },
-            x: event_exit
-        };
-
-        target.index = function(i) {
-            if (is_set(i)) {
-                return do_instance(target[i]);
+            x: event_exit,
+            capture: function(event, get, fn) {
+                return target.events.set(event, function(e) {
+                    t = query(get, this);
+                    if (has(t, e.target) !== -1 || (u = do_instance(e.target)) && has(t, u.closest(get)[0]) !== -1) {
+                        return fn.call(t, e);
+                    }
+                });
             }
-            return dom_index(target[0]);
-        };
-
-        target.first = function() {
-            return do_instance(target[0]);
-        };
-
-        target.last = function() {
-            return do_instance(target.pop());
-        };
-
-        target.parent = function() {
-            return do_instance(dom_parent(target[0]));
-        };
-
-        target.children = function() {
-            return do_instance(dom_children(target[0]));
-        };
-
-        target.closest = function(s) {
-            return do_instance(dom_closest(target[0], s));
-        };
-
-        target.next = function() {
-            return do_instance(dom_next(target[0]));
-        };
-
-        target.previous = function() {
-            return do_instance(dom_previous(target[0]));
-        };
-
-        target.begin = function(s) {
-            return each(target, function(v) {
-                dom_begin(v, el(s));
-            });
-        };
-
-        target.end = function(s) {
-            return each(target, function(v) {
-                dom_end(v, el(s));
-            });
-        };
-
-        target.before = function(s) {
-            return each(target, function(v) {
-                dom_before(v, el(s));
-            });
-        };
-
-        target.after = function(s) {
-            return each(target, function(v) {
-                dom_after(v, el(s));
-            });
-        };
+        });
 
         return target;
 

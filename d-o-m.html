@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>Test</title>
     <script src="d-o-m.min.js"></script>
+    <style>
+    .can-add {cursor:pointer}
+    </style>
   </head>
   <body>
     <article>
@@ -23,6 +26,7 @@
               <li>list item 5</li>
               <li>list item 6</li>
               <li>list item 7</li>
+              <li class="can-add">i am clickable!</li>
             </ul>
             <p><label><input type="checkbox" onchange="alert('is checked: ' + this.checked)"> test checkbox</label></p>
           </div>
@@ -43,20 +47,21 @@
       <button onclick="$('h1').css('color','red');">set red color</button>
       <button onclick="$('h1').css({color:'green'});">set green color</button>
       <button onclick="alert($('h1').css('color'));">get color</button>
-      <button onclick="$('h1').event.set('click',function(){alert('test click event ' + (new Date()).toLocaleString())});">click to alert</button>
-      <button onclick="$('h1').event.reset('click');">delete click</button>
+      <button onclick="$('h1').events.set('click',function(){alert('test click event ' + (new Date()).toLocaleString())});">click to alert</button>
+      <button onclick="$('h1').events.reset('click');">delete click</button>
       <button onclick="console.log($('.h1-a').next().css('border','4px solid red'));">next element of <code>h1.h1-a</code></button>
       <button onclick="console.log($('.h1-b').previous().css('border','4px solid red'));">previous element of <code>h1.h1-b</code></button>
       <button onclick="console.log($('h1').parent().css('border','4px solid yellow'));">parent element of <code>h1</code></button>
       <button onclick="console.log($('h1').closest('section').css('border','4px solid green'));">closest <code>section</code> element of <code>h1</code></button>
       <button onclick="console.log($('div').children().css('border','1px dashed red'));">children of <code>div</code></button>
-      <button onclick="$('h1').event.set('click',function(){console.log(this);$(this).css('font-style','italic')});">test <code>this</code> scope of all <code>h1</code> elements</button>
+      <button onclick="console.log($('div').find('*').css('border','1px dashed green'));">recursive children of <code>div</code></button>
+      <button onclick="$('h1').html('click me!').events.set('click',function(){console.log(this);$(this).css('font-style','italic')});">test <code>this</code> scope of all <code>h1</code> elements</button>
       <button onclick="console.log($('h1').css('color',null).is('.h1-a').css('color','red'));">test filter 1 (apply style to <code>.h1-a</code>) only</button>
       <button onclick="console.log($('h1').css('color',null).is(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2 (apply style to <code>h1</code> elements with class name match to <code>/^h1\-[bc]$/</code>)</button>
       <button onclick="$('*').css(false);">remove inline styles on all elements</button>
-      <button onclick="$('a').event.set('click',false);">disable link</button>
-      <button onclick="$('a').event.reset('click');">enable link</button>
-      <button onclick="$('a').event.reset('click').event.set('click',function(){console.log(this);return window.open(this.href,'my-window','width=200,height=100'),false});">new window link</button>
+      <button onclick="$('a').events.set('click',false);">disable link</button>
+      <button onclick="$('a').events.reset('click');">enable link</button>
+      <button onclick="$('a').events.reset('click').events.set('click',function(){console.log(this);return window.open(this.href,'my-window','width=200,height=100'),false});">new window link</button>
       <button onclick="alert($('li').length);">test <code>li</code> length</button>
       <button onclick="$('li').css(false).first().css('color','red');">get first <code>li</code></button>
       <button onclick="$('li').css(false).last().css('color','red');">get last <code>li</code></button>
@@ -64,5 +69,10 @@
       <button onclick="$('input[type=checkbox]').set('check', true);">check the <code>input[type=checkbox]</code></button>
       <button onclick="$('input[type=checkbox]').set('check', false);">uncheck the <code>input[type=checkbox]</code></button>
     </p>
+    <script>
+    $('ul').events.capture('click', 'li.can-add', function() {
+        $(this).parent().end('<li class="can-add">other clickable <code>li</code> elements&hellip;</li>');
+    });
+    </script>
   </body>
 </html>
