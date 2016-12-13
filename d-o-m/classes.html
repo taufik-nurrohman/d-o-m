@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+    <style>.test {background:blue}</style>
+  </head>
+  <body>
+    <ul>
+      <li>red</li>
+      <li>green</li>
+      <li class="test">blue</li>
+      <li>yellow</li>
+    </ul>
+    <p>
+      <button onclick="$('li').classes.toggle('test');">toggle</button>
+      <button onclick="$('li').classes.set('test');">set</button>
+      <button onclick="$('li').classes.reset('test');">reset</button>
+      <button onclick="alert($.encode.json($('li').classes.get('test')));">get</button>
+      <button onclick="alert($.encode.json($('li').classes()));">get (base)</button>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <p>
+      <input type="checkbox">
+      <input type="checkbox">
+      <input type="checkbox">
+      <input type="checkbox">
+      <input type="checkbox">
+    </p>
+    <p>
+      <button onclick="$('input').attributes.set('check', true);">check all (no fire events)</button>
+      <button onclick="$('input').set('check', true);">check all</button>
+    </p>
+    <script>
+    $('input').events.set("change", function() {
+        alert('is checked: ' + this.checked);
+    });
+    </script>
+  </body>
+</html>

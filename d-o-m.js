@@ -384,9 +384,8 @@
         o = [];
         for (i in a) {
             i = prop(a[i]);
-            if (i = node.getAttribute(i)) {
-                o.push(decode_value(i));
-            }
+            i = node.getAttribute(i) || "";
+            o.push(decode_value(i));
         }
         return count(o) ? o : (is_set(b) ? b : []);
     }
@@ -425,20 +424,19 @@
                 l = j[i];
                 m = l.name;
                 if (m.slice(0, 5) === 'data-') {
-                    o[m.slice(5)] = l.value;
+                    o[m.slice(5)] = decode_value(l.value);
                 }
             }
             return count_object(o) ? (is_plain_object(b) ? extend(b, o) : o) : (is_set(b) ? b : {});
         }
         if (is_string(a)) {
-            return data_get(node, [a], [is_set(b) ? b : ""])[0];
+            return attr_get(node, [a], [is_set(b) ? b : ""])[0];
         }
         o = [];
         for (i in a) {
             i = a[i];
-            if (i = attr_get(node, 'data-' + i)) {
-                o.push(i);
-            }
+            i = attr_get(node, 'data-' + i);
+            o.push(i);
         }
         return count(o) ? o : (is_set(b) ? b : []);
     }
@@ -640,9 +638,9 @@
     (function($, $$) {
 
         $.version = '1.0.0';
-        $.DOM = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
+        $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
-            e: {}, // node(s)
+            e: {}, // element(s)
             f: {}, // function(s)
             h: {}  // hook(s)
         };
@@ -934,7 +932,7 @@
             $$ = win[DOM_NS_1];
 
         function query(target, scope) {
-            if (target instanceof $$) return target;
+            if (target instanceof DOM) return target;
             var html = doc.documentElement,
                 head = doc.head,
                 body = doc.body,
@@ -976,7 +974,7 @@
         if ((i = has($$.id.e, target.query)) !== -1) {
             target.id = i;
         } else {
-            i = uid('dom:');
+            i = uid(to_lower_case(DOM_NS_1) + ':');
             target.id = i;
             $$.id.e[i] = target.query;
         }
@@ -1004,7 +1002,7 @@
                     fn.call(v, k, a);
                 });
             },
-            filter: function(s, f) {
+            is: function(s, f) {
                 if (!is_set(s)) return target;
                 f = is_set(f) ? f : [];
                 if (is_function(s)) {
@@ -1034,7 +1032,7 @@
             },
             has: function(s) {
                 if (!count(target.children())) return false;
-                return target.filter(function() {
+                return target.is(function() {
                     return count(do_instance(this).find(s)) > 0;
                 });
             },
@@ -1128,7 +1126,7 @@
                 each(target, function(v) {
                     o = o.concat(dom_children(v));
                 });
-                return do_instance(o).filter(s);
+                return do_instance(o).is(s);
             },
             kin: function(s) {
                 var o = [],
@@ -1153,10 +1151,10 @@
                 return do_instance(o);
             },
             next: function(s) {
-                return do_instance(dom_next(target[0])).filter(s);
+                return do_instance(dom_next(target[0])).is(s);
             },
             previous: function(s) {
-                return do_instance(dom_previous(target[0])).filter(s);
+                return do_instance(dom_previous(target[0])).is(s);
             },
             prepend: function(s) {
                 return each(target, function(v) {
@@ -1192,7 +1190,7 @@
             },
             unwrap: function(s) {
                 return each(target, function(v) {
-                    t = is_set(s) ? do_instance(v).closest(s) : [dom_parent(v)];console.log(t)
+                    t = is_set(s) ? do_instance(v).closest(s) : [dom_parent(v)];
                     dom_replace(t[0], v);
                 });
             },
@@ -1218,23 +1216,13 @@
                 });
             },
             show: function() {
-                return each(target, function(v) {
-                    css(v, {
-                        'display': null
-                    });
-                });
+                return target.css('display', null);
             },
             hide: function() {
-                return each(target, function(v) {
-                    css(v, {
-                        'display': 'none'
-                    });
-                });
+                return target.css('display', 'none');
             },
             toggle: function() {
-                return each(target, function(v) {
-                    return target[css(v, 'display') === 'none' ? 'show' : 'hide']();
-                });
+                return target[css(v, 'display') === 'none' ? 'show' : 'hide']();
             },
             offset: function(o) {
                 t = target[0];
@@ -1290,9 +1278,7 @@
         each(["click", "focus", "blur", "select", "submit"], function(e) {
             target[e] = function(fn) {
                 if (!is_set(fn)) {
-                    return each(target, function(v) {
-                        event_fire(e, v, []);
-                    });
+                    return target.events.fire(e);
                 }
                 return target.events.set(e, fn);
             };

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <p><input name="foo" type="checkbox" pattern="\d+" checked></p>
+    <p>
+      <button onclick="alert($.encode.json($('input').attributes()));"><code>.attributes()</code></button>
+      <button onclick="alert($.encode.json($('input').attributes.get('type')));"><code>.attributes.get('type')</code></button>
+      <button onclick="alert($.encode.json($('input').attributes.get(['type','check'])));"><code>.attributes.get(['type', 'check'])</code></button>
+      <button onclick="$('input').attributes.set('disable',true);"><code>.attributes.set('disable', true)</code></button>
+      <button onclick="$('input').attributes.reset('type');"><code>.attributes.reset('type')</code></button>
+    </p>
+  </body>
+</html>
