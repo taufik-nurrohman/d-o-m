@@ -289,7 +289,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
         <p>All CSS value that can be parsed by JavaScript <code>parseInt</code> will be returned as number:</p>
         <pre><code>$('ul').css('border-top-width'); // return `1`</code></pre>
         <p>To disable that behaviour, prepend a <code>\0</code> to the CSS property:</p>
-        <pre><code>$('ul').css('\bborder-top-width'); // return `1px`</code></pre>
+        <pre><code>$('ul').css('\0border-top-width'); // return `1px`</code></pre>
       </blockquote>
       <h3 id="section:method-show">.show()</h3>
       <p>Display the matched elements.</p>
@@ -351,6 +351,30 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Prevent <var>input</var> exceeds the value of <var>min</var> and <var>max</var>.</p>
       <pre><code>$.edge(<var>input</var>, 0, 4);</code></pre>
       <h3 id="section:utility-el">.el()</h3>
+      <p>Create a new HTML element.</p>
+      <pre><code>$.el(); // return `&lt;div&gt;&lt;/div&gt;`</code></pre>
+      <pre><code>$.el('a'); // return `&lt;a&gt;&lt;/a&gt;`</code></pre>
+      <pre><code>$.el('a', 'link text'); // return `&lt;a&gt;link text&lt;/a&gt;`</code></pre>
+      <pre><code>$.el('a', 'link text', {
+    'href': '/',
+    'target': '_blank'
+}); // return `&lt;a href="/" target="_blank"&gt;link text&lt;/a&gt;`</code></pre>
+      <pre><code>$.el('a', el('b', 'link text'), {
+    'href': '/',
+    'target': '_blank'
+}); // return `&lt;a href="/" target="_blank"&gt;&lt;b&gt;link text&lt;/b&gt;&lt;/a&gt;`</code></pre>
+      <pre><code>$.el('a', [el('b', 'link'), el('i', 'text')], {
+    'href': '/',
+    'target': '_blank'
+}); // return `&lt;a href="/" target="_blank"&gt;&lt;b&gt;link&lt;/b&gt;&lt;i&gt;text&lt;/i&gt;&lt;/a&gt;`</code></pre>
+      <pre><code>$.el(document.querySelector('a'), false, {
+    'href': 'javascript:;',
+    'target': '_blank'
+});</code></pre>
+      <pre><code>$.el('&lt;a&gt;&lt;/a&gt;', 'link text', {
+    'href': 'javascript:;',
+    'target': '_blank'
+});</code></pre>
       <h3 id="section:utility-extend">.extend()</h3>
       <h3 id="section:utility-has">.has()</h3>
       <h3 id="section:utility-noop">.noop()</h3>
