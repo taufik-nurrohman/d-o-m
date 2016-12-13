@@ -1395,9 +1395,11 @@
             }
         });
 
-        // apply all plugin(s)
+        // plugin API
         for (i in $$.plug) {
-            target.prototype[i] = $$.plug[i];
+            target[i] = function() {
+                return $$.plug[i].apply(target, arguments);
+            };
         }
 
         return target;
