@@ -6,29 +6,7 @@
     <title>DOM Library</title>
     <link href="favicon.ico" rel="shortcut icon">
     <script src="d-o-m.min.js"></script>
-    <style>
-    html,body {
-      margin:0;
-      padding:0;
-      background:#fff;
-      color:#000;
-    }
-    body {padding:5%}
-    h1 {margin-top:0}
-    blockquote {
-      margin-left:0;
-      margin-right:0;
-      font-style:italic;
-    }
-    pre {
-      background:#000;
-      color:#fff;
-      padding:1em;
-      white-space:pre-wrap;
-      word-wrap:break-word;
-      font-style:normal;
-    }
-    </style>
+    <style>*{margin:0;padding:0}b,h1,h2,h3,h4,h5,h6,strong{font-weight:700}em,i,var{font-style:italic}body,html{background:#fff;color:#000}body{font:normal normal 15px/1.5 "Times New Roman",Times,Serif;padding:5%;margin-right:15em}footer,section{margin:5% 0 0}a{color:#00f;text-decoration:none}a:hover{text-decoration:underline}a:active,a:focus{color:red}h1{font-size:250%}h2{font-size:170%}h3{font-size:120%}h4{font-size:100%}aside h3,h5{font-size:110%}h6{font-size:80%}blockquote,h1,h2,h3,h4,h5,h6,ol,p,pre,ul{margin:1rem 0 0}h1,ol ol,ol ul,ul ol,ul ul{margin-top:0}ol,ul{margin-left:2em;padding-left:0}ul li{list-style:square}code{font-family:"Courier New",Courier,"Nimbus Mono L",Monospace;font-size:86%}blockquote{padding-left:1em}pre{background:#000;color:#fff;padding:1em;white-space:pre-wrap;word-wrap:break-word;font-style:normal;font-size:90%;line-height:1em}aside{position:absolute;top:5%;right:5%;width:12em}@media (max-width:800px){body{margin-right:0}aside{position:static;margin-top:5%}}</style>
   </head>
   <body>
     <header>
@@ -55,6 +33,14 @@
 &lt;/html&gt;</code></pre>
       <h2 id="section:configure">Configure</h2>
       <p>Configuration is not available.</p>
+      <h2 id="section:extend">Extend</h2>
+      <p>Create a new extension:</p>
+      <pre><code>$.plug.red = function() {
+    // `this` refers to the DOM object
+    return this.css('color', 'red');
+};</code></pre>
+      <p>Usage:</p>
+      <pre><code>$('div').red();</code></pre>
       <h2 id="section:method">Methods</h2>
       <p>Initialize a <em>DOM</em> instance with <code>$(<var>selector</var>[, <var>context</var>])</code> or <code>DOM(<var>selector</var>[, <var>context</var>])</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
       <pre><code>$('#foo');</code></pre>
@@ -81,7 +67,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>console.log($('body').item(0));
 
 // &lt;body&gt;</code></pre>
-      <h3 id="section:method-html">.each()</h3>
+      <h3 id="section:method-each">.each()</h3>
       <p>Iterate over a <em>DOM</em> object, executing a function for each matched element.</p>
       <pre><code>$('.foo').each(function(key, source) {
     // `key` refers to the current array index
@@ -106,18 +92,6 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h3 id="section:method-range">.range()</h3>
       <p>Reduce the set of matched elements to a subset specified by a range of indices.</p>
       <pre><code>$('li').range(0, 4).css('color', 'red');</code></pre>
-      <h3 id="section:method-html">.html()</h3>
-      <p>Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.</p>
-      <pre><code>$('#foo').html(); // get HTML content of `#foo`</code></pre>
-      <pre><code>$('#foo').html('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&lt;b&gt;bar&lt;/b&gt;`</code></pre>
-      <h3 id="section:method-text">.text()</h3>
-      <p>Get the combined text contents of each element in the set of matched elements, including their descendants, or set the text contents of the matched elements.</p>
-      <pre><code>$('#foo').text(); // get text content of `#foo`</code></pre>
-      <pre><code>$('#foo').text('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&amp;lt;b&amp;gt;bar&amp;lt;/b&amp;gt;`</code></pre>
-      <h3 id="section:method-copy">.copy()</h3>
-      <p>Create a deep copy of the set of matched elements. Set the first parameter to <code>false</code> to copy only the outer HTML element.</p>
-      <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt;foo bar&lt;/li&gt;&lt;/ul&gt;`</code></pre>
-      <pre><code>var $copy = $('ul').copy(false); // return `&lt;ul&gt;&lt;/ul&gt;`</code></pre>
       <h3 id="section:method-set">.set()</h3>
       <p>Set one or more properties for every matched element.</p>
       <pre><code>$('input[type="checkbox"]').set('check', true);</code></pre>
@@ -196,9 +170,9 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h4 id="section:method-events-set">.events.set()</h4>
       <p>Attach an event handler function for one or more events to the selected elements.</p>
       <pre><code>$('input').events.set("keydown", function(e) {
-    // Here, `e` will also contains `DOM` property which will normalize
+    // Here, `e` will also hold a `DOM` property which normalizes
     // and add support (if not yet supported) the `key` property.
-    // All `e.DOM.key()` values are in lower case &rarr; <a href="http://tovic.github.io/text-editor/text-editor#section:key" target="_blank">[read more]</a>
+    // All `e.DOM.key()` values are in lower case mode &rarr; <a href="http://tovic.github.io/text-editor/text-editor#section:key" target="_blank">[read more]</a>
     // `this` refers to the current `$('button')` from the set.
 });</code></pre>
       <ul>
@@ -223,6 +197,26 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('#container').events.capture("click", 'button', function() {
     $(this).append('&lt;button&gt;new button&lt;/button&gt;');
 });</code></pre>
+      <h3 id="section:method-click">.click()</h3>
+      <p>Bind an event handler to the <code>click</code> JavaScript event, or trigger that event on an element.</p>
+      <pre><code>$('button').click(function() { &hellip; });</code></pre>
+      <pre><code>$('button').click();</code></pre>
+      <h3 id="section:method-focus">.focus()</h3>
+      <p>Bind an event handler to the <code>focus</code> JavaScript event, or trigger that event on an element.</p>
+      <pre><code>$('input').focus(function() { &hellip; });</code></pre>
+      <pre><code>$('input').focus();</code></pre>
+      <h3 id="section:method-blur">.blur()</h3>
+      <p>Bind an event handler to the <code>blur</code> JavaScript event, or trigger that event on an element.</p>
+      <pre><code>$('input').blur(function() { &hellip; });</code></pre>
+      <pre><code>$('input').blur();</code></pre>
+      <h3 id="section:method-select">.select()</h3>
+      <p>Bind an event handler to the <code>select</code> JavaScript event, or trigger that event on an element.</p>
+      <pre><code>$('input').select(function() { &hellip; });</code></pre>
+      <pre><code>$('input').select();</code></pre>
+      <h3 id="section:method-submit">.submit()</h3>
+      <p>Bind an event handler to the <code>submit</code> JavaScript event, or trigger that event on an element.</p>
+      <pre><code>$('form').submit(function() { &hellip; });</code></pre>
+      <pre><code>$('form').submit();</code></pre>
       <h3 id="section:method-index">.index()</h3>
       <p>Return the current element index or to search for a given element from among the matched elements.</p>
       <pre><code>$('li:first-child').index(); // return `0`</code></pre>
@@ -254,6 +248,22 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h3 id="section:method-previous">.previous()</h3>
       <p>Get the immediately preceding sibling of each element in the set of matched elements. If a selector is provided, it retrieves the previous sibling only if it matches that selector.</p>
       <pre><code>$('li:last-child').previous().css('color', 'red');</code></pre>
+      <h3 id="section:method-html">.html()</h3>
+      <p>Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.</p>
+      <pre><code>$('#foo').html(); // get HTML content of `#foo`</code></pre>
+      <pre><code>$('#foo').html('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&lt;b&gt;bar&lt;/b&gt;`</code></pre>
+      <h3 id="section:method-text">.text()</h3>
+      <p>Get the combined text contents of each element in the set of matched elements, including their descendants, or set the text contents of the matched elements.</p>
+      <pre><code>$('#foo').text(); // get text content of `#foo`</code></pre>
+      <pre><code>$('#foo').text('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&amp;lt;b&amp;gt;bar&amp;lt;/b&amp;gt;`</code></pre>
+      <h3 id="section:method-value">.value()</h3>
+      <p>Get the current value of the first element in the set of matched elements or set the value of every matched element.</p>
+      <pre><code>console.log($('input').value());</code></pre>
+      <pre><code>$('input').value('foo bar baz');</code></pre>
+      <h3 id="section:method-copy">.copy()</h3>
+      <p>Create a deep copy of the set of matched elements. Set the first parameter to <code>false</code> to copy only the outer HTML element.</p>
+      <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt;foo bar&lt;/li&gt;&lt;/ul&gt;`</code></pre>
+      <pre><code>var $copy = $('ul').copy(false); // return `&lt;ul&gt;&lt;/ul&gt;`</code></pre>
       <h3 id="section:method-prepend">.prepend()</h3>
       <p>Insert content, specified by the parameter, to the beginning of each element in the set of matched elements.</p>
       <pre><code>$('ul').prepend('&lt;li&gt;list item&lt;/li&gt;');</code></pre>
@@ -309,30 +319,6 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Get the current computed width and height for the first element in the set of matched elements.</p>
       <pre><code>console.log($('ul').size());</code></pre>
       <pre><code>console.log($('ul').size(true));</code></pre>
-      <h3 id="section:method-value">.value()</h3>
-      <p>Get the current value of the first element in the set of matched elements or set the value of every matched element.</p>
-      <pre><code>console.log($('input').value());</code></pre>
-      <pre><code>$('input').value('foo bar baz');</code></pre>
-      <h3 id="section:method-click">.click()</h3>
-      <p>Bind an event handler to the <code>click</code> JavaScript event, or trigger that event on an element.</p>
-      <pre><code>$('button').click(function() { &hellip; });</code></pre>
-      <pre><code>$('button').click();</code></pre>
-      <h3 id="section:method-focus">.focus()</h3>
-      <p>Bind an event handler to the <code>focus</code> JavaScript event, or trigger that event on an element.</p>
-      <pre><code>$('input').focus(function() { &hellip; });</code></pre>
-      <pre><code>$('input').focus();</code></pre>
-      <h3 id="section:method-blur">.blur()</h3>
-      <p>Bind an event handler to the <code>blur</code> JavaScript event, or trigger that event on an element.</p>
-      <pre><code>$('input').blur(function() { &hellip; });</code></pre>
-      <pre><code>$('input').blur();</code></pre>
-      <h3 id="section:method-select">.select()</h3>
-      <p>Bind an event handler to the <code>select</code> JavaScript event, or trigger that event on an element.</p>
-      <pre><code>$('input').select(function() { &hellip; });</code></pre>
-      <pre><code>$('input').select();</code></pre>
-      <h3 id="section:method-submit">.submit()</h3>
-      <p>Bind an event handler to the <code>submit</code> JavaScript event, or trigger that event on an element.</p>
-      <pre><code>$('form').submit(function() { &hellip; });</code></pre>
-      <pre><code>$('form').submit();</code></pre>
       <h2 id="section:property">Properties</h2>
       <pre><code>var $link = $('nav a + ul');</code></pre>
       <h3 id="section:property-$">.query</h3>
@@ -437,6 +423,94 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h3 id="section:utility-keys_alias">.keys_alias</h3>
       <h3 id="section:utility-key">.event()</h3>
     </section>
+    <aside>
+      <h3>Table of Content</h3>
+      <nav>
+        <ul>
+          <li><a href="#section:start">Start</a></li>
+          <li><a href="#section:configure">Configure</a></li>
+          <li><a href="#section:extend">Extend</a></li>
+          <li><a href="#section:method">Methods</a>
+            <ul>
+              <li><a href="#section:method-$"><code>.$()</code></a></li>
+              <li><a href="#section:method-item"><code>.item()</code></a></li>
+              <li><a href="#section:method-each"><code>.each()</code></a></li>
+              <li><a href="#section:method-is"><code>.is()</code></a></li>
+              <li><a href="#section:method-not"><code>.not()</code></a></li>
+              <li><a href="#section:method-has"><code>.has()</code></a></li>
+              <li><a href="#section:method-range"><code>.range()</code></a></li>
+              <li><a href="#section:method-set"><code>.set()</code></a></li>
+              <li><a href="#section:method-reset"><code>.reset()</code></a></li>
+              <li><a href="#section:method-get"><code>.get()</code></a></li>
+              <li><a href="#section:method-attributes"><code>.attributes()</code></a>
+                <ul>
+                  <li><a href="#section:method-attributes-set"><code>.set()</code></a></li>
+                  <li><a href="#section:method-attributes-reset"><code>.reset()</code></a></li>
+                  <li><a href="#section:method-attributes-get"><code>.get()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:method-classes"><code>.classes()</code></a>
+                <ul>
+                  <li><a href="#section:method-classes-set"><code>.set()</code></a></li>
+                  <li><a href="#section:method-classes-reset"><code>.reset()</code></a></li>
+                  <li><a href="#section:method-classes-toggle"><code>.toggle()</code></a></li>
+                  <li><a href="#section:method-classes-get"><code>.get()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:method-data"><code>.data()</code></a>
+                <ul>
+                  <li><a href="#section:method-data-set"><code>.set()</code></a></li>
+                  <li><a href="#section:method-data-reset"><code>.reset()</code></a></li>
+                  <li><a href="#section:method-data-get"><code>.get()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:method-events"><code>.events()</code></a>
+                <ul>
+                  <li><a href="#section:method-events-set"><code>.set()</code></a></li>
+                  <li><a href="#section:method-events-reset"><code>.reset()</code></a></li>
+                  <li><a href="#section:method-events-get"><code>.get()</code></a></li>
+                  <li><a href="#section:method-events-capture"><code>.capture()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:method-click"><code>.click()</code></a></li>
+              <li><a href="#section:method-focus"><code>.focus()</code></a></li>
+              <li><a href="#section:method-blur"><code>.blur()</code></a></li>
+              <li><a href="#section:method-select"><code>.select()</code></a></li>
+              <li><a href="#section:method-submit"><code>.submit()</code></a></li>
+              <li><a href="#section:method-index"><code>.index()</code></a></li>
+              <li><a href="#section:method-first"><code>.first()</code></a></li>
+              <li><a href="#section:method-last"><code>.last()</code></a></li>
+              <li><a href="#section:method-parent"><code>.parent()</code></a></li>
+              <li><a href="#section:method-children"><code>.children()</code></a></li>
+              <li><a href="#section:method-kin"><code>.kin()</code></a></li>
+              <li><a href="#section:method-closest"><code>.closest()</code></a></li>
+              <li><a href="#section:method-find"><code>.find()</code></a></li>
+              <li><a href="#section:method-next"><code>.next()</code></a></li>
+              <li><a href="#section:method-previous"><code>.previous()</code></a></li>
+              <li><a href="#section:method-html"><code>.html()</code></a></li>
+              <li><a href="#section:method-text"><code>.text()</code></a></li>
+              <li><a href="#section:method-value"><code>.value()</code></a></li>
+              <li><a href="#section:method-copy"><code>.copy()</code></a></li>
+              <li><a href="#section:method-prepend"><code>.prepend()</code></a></li>
+              <li><a href="#section:method-append"><code>.append()</code></a></li>
+              <li><a href="#section:method-before"><code>.before()</code></a></li>
+              <li><a href="#section:method-after"><code>.after()</code></a></li>
+              <li><a href="#section:method-remove"><code>.remove()</code></a></li>
+              <li><a href="#section:method-wrap"><code>.wrap()</code></a></li>
+              <li><a href="#section:method-unwrap"><code>.unwrap()</code></a></li>
+              <li><a href="#section:method-css"><code>.css()</code></a></li>
+              <li><a href="#section:method-show"><code>.show()</code></a></li>
+              <li><a href="#section:method-hide"><code>.hide()</code></a></li>
+              <li><a href="#section:method-toggle"><code>.toggle()</code></a></li>
+              <li><a href="#section:method-offset"><code>.offset()</code></a></li>
+              <li><a href="#section:method-size"><code>.size()</code></a></li>
+            </ul>
+          </li>
+          <li><a href="#section:property">Properties</a></li>
+          <li><a href="#section:utility">Utilities</a></li>
+        </ul>
+      </nav>
+    </aside>
     <footer>
       <p>&copy; 2016 &middot; <a href="">Taufik Nurrohman</a></p>
     </footer>
