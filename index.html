@@ -50,7 +50,7 @@
       <h2 id="section:configure">Configure</h2>
       <p>Configuration is not available.</p>
       <h2 id="section:method">Methods</h2>
-      <p>Initialize a <em>DOM</em> instance with <code>$(<var>selector</var>)</code> or <code>DOM(<var>selector</var>)</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
+      <p>Initialize a <em>DOM</em> instance with <code>$(<var>selector</var>[, <var>context</var>])</code> or <code>DOM(<var>selector</var>[, <var>context</var>])</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
       <pre><code>$('#foo');</code></pre>
       <h3 id="section:method-$">.$()</h3>
       <p>Create a new <em>DOM</em> object with elements added to the current set of matched elements.</p>
@@ -82,15 +82,12 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
     // `source` refers to the array
     // `this` refers to the current array item
 });</code></pre>
-      <h3 id="section:method-filter">.filter()</h3>
+      <h3 id="section:method-is">.is()</h3>
       <p>Reduce the set of matched elements to those that match the selector or pass the function&rsquo;s test.</p>
-      <pre><code>$('h2').filter('[id]'); // &hellip; is the same as `$('h2[id]')`</code></pre>
-      <pre><code>$('h2').filter(function() {
+      <pre><code>$('h2').is('[id]'); // &hellip; is the same as `$('h2[id]')`</code></pre>
+      <pre><code>$('h2').is(function() {
     return this.id === '#foo';
 }); // &hellip; is the same as `$('h2#foo')`</code></pre>
-      <h3 id="section:method-is">.is()</h3>
-      <p>Check the current matched set of elements against a selector, element, or <em>DOM</em> object and return <code>true</code> if at least one of these elements matches the given arguments.</p>
-      <pre><code>if ($('h2').is('[id]')) { /* `h2` has an ID attribute */ }</code></pre>
       <h3 id="section:method-not">.not()</h3>
       <p>Remove elements from the set of matched elements.</p>
       <pre><code>$('h2').not('[id]'); // &hellip; is the same as `$('h2:not([id])')`</code></pre>
@@ -112,53 +109,114 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('#foo').text(); // get text content of `#foo`</code></pre>
       <pre><code>$('#foo').text('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&amp;lt;b&amp;gt;bar&amp;lt;/b&amp;gt;`</code></pre>
       <h3 id="section:method-copy">.copy()</h3>
-      <p>Create a deep copy of the set of matched elements.</p>
-      <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt; &hellip; &lt;/li&gt; &hellip; &lt;/ul&gt;`</code></pre>
+      <p>Create a deep copy of the set of matched elements. Set the first parameter to <code>false</code> to copy only the outer HTML element.</p>
+      <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt;foo bar&lt;/li&gt;&lt;/ul&gt;`</code></pre>
       <pre><code>var $copy = $('ul').copy(false); // return `&lt;ul&gt;&lt;/ul&gt;`</code></pre>
       <h3 id="section:method-set">.set()</h3>
       <p>Set one or more properties for every matched element.</p>
-      <pre><code>$('input[type="checkbox"]').set('checked', true);</code></pre>
+      <pre><code>$('input[type="checkbox"]').set('check', true);</code></pre>
+      <pre><code>$('input[type="checkbox"]').set({
+    'check': true,
+    'disable': true
+});</code></pre>
+      <blockquote>
+        <p>Property <code>check</code> is just an alias for property <code>checked</code>. Some attributes need to have their own aliases because of the inconsistencies between JavaScript and HTML/CSS syntax.</p>
+        <p><strong>Example:</strong> A comparison between <code>spellcheck</code> in HTML/CSS with <code>spellcheck</code> in JavaScript and <code>readonly</code> in HTML/CSS with <code>readOnly</code> in JavaScript.</p>
+      </blockquote>
       <h3 id="section:method-reset">.reset()</h3>
-      <pre><code>$('input[type="checkbox"]').reset('checked');</code></pre>
       <p>Remove one or more properties for the set of matched elements.</p>
+      <pre><code>$('input[type="checkbox"]').reset('check');</code></pre>
+      <pre><code>$('input[type="checkbox"]').reset(['check', 'disable']);</code></pre>
       <h3 id="section:method-get">.get()</h3>
-      <pre><code>$('input[type="checkbox"]').set('checked', false);</code></pre>
       <p>Get the value of a property for the first element in the set of matched elements.</p>
+      <pre><code>$('input[type="checkbox"]').get('check');</code></pre>
+      <pre><code>$('input[type="checkbox"]').get(['check', 'disable']);</code></pre>
       <h3 id="section:method-attributes">.attributes()</h3>
       <p>Get all of the available HTML attributes for the first element in the set of matched elements.</p>
+      <pre><code>console.log($('input').attributes());</code></pre>
       <h4 id="section:method-attributes-set">.attributes.set()</h4>
       <p>Set one or more attributes for every matched element.</p>
+      <pre><code>$('input').attributes.set('type', 'text');</code></pre>
+      <pre><code>$('input').attributes.set({
+    'type': 'text',
+    'placeholder': 'text goes here&hellip;'
+});</code></pre>
       <h4 id="section:method-attributes-reset">.attributes.reset()</h4>
       <p>Remove one or more attributes from each element in the set of matched elements.</p>
+      <pre><code>$('input').attributes.reset(); // remove all HTML attributes</code></pre>
+      <pre><code>$('input').attributes.reset('type'); // remove the `type` HTML attribute</code></pre>
+      <pre><code>$('input').attributes.reset(['type', 'placeholder']); // remove `type` and `placeholder` HTML attributes</code></pre>
       <h4 id="section:method-attributes-get">.attributes.get()</h4>
       <p>Get the value of an attribute for the first element in the set of matched elements.</p>
+      <pre><code>$('input[type="checkbox"]').attributes.get('checked');</code></pre>
+      <pre><code>$('input[type="checkbox"]').attributes.get(['checked', 'disabled']);</code></pre>
       <h3 id="section:method-classes">.classes()</h3>
       <p>Get all of the available HTML class names for the first element in the set of matches elements as array.</p>
+      <pre><code>console.log($('div').classes());</code></pre>
       <h4 id="section:method-classes-set">.classes.set()</h4>
       <p>Adds the specified class or classes to each element in the set of matched elements.</p>
+      <pre><code>$('div').classes.set('foo');</code></pre>
+      <pre><code>$('div').classes.set(['foo', 'bar']);</code></pre>
       <h4 id="section:method-classes-reset">.classes.reset()</h4>
       <p>Remove a single class, multiple classes, or all classes from each element in the set of matched elements.</p>
+      <pre><code>$('div').classes.reset('foo');</code></pre>
+      <pre><code>$('div').classes.reset(['foo', 'bar']);</code></pre>
       <h4 id="section:method-classes-toggle">.classes.toggle()</h4>
       <p>Add or remove one or more classes from each element in the set of matched elements, depending on either the class&rsquo; presence.</p>
+      <pre><code>$('div').classes.toggle('foo');</code></pre>
       <h4 id="section:method-classes-get">.classes.get()</h4>
       <p>Determine whether any of the matched elements are assigned the given class names. Return array of the given class names or empty string and empty array on failure.</p>
+      <pre><code>$('div').classes.get('foo');</code></pre>
+      <pre><code>$('div').classes.get(['foo', 'bar']);</code></pre>
       <h3 id="section:method-data">.data()</h3>
-      <p>Get all of the available HTML5 <code>data-*</code> attributes for the first element in the set of matched elements as an object.</p>
+      <p>Get all of the available HTML5 <code>data-*</code> attributes for the first element in the set of matched elements as an object, and convert their string values into the appropriate type/format.</p>
+      <pre><code>console.log($('div').data());</code></pre>
       <h4 id="section:method-data-set">.data.set()</h4>
       <p>Store arbitrary data associated with the matched elements in HTML5 <code>data-*</code> attributes.</p>
+      <pre><code>$('div').data.set('foo', 0);</code></pre>
+      <pre><code>$('div').data.set({
+    'foo': 0,
+    'bar': 1
+});</code></pre>
       <h4 id="section:method-data-reset">.data.reset()</h4>
       <p>Remove HTML5 <code>data-*</code> attributes associated with the matched elements.</p>
+      <pre><code>$('div').data.reset('foo');</code></pre>
+      <pre><code>$('div').data.reset(['foo', 'bar']);</code></pre>
       <h4 id="section:method-data-get">.data.get()</h4>
       <p>Return the value at the named data store for the first element in the set of matched elements.</p>
+      <pre><code>$('div').data.get('foo');</code></pre>
+      <pre><code>$('div').data.get(['foo', 'bar']);</code></pre>
       <h3 id="section:method-events">.events()</h3>
       <h4 id="section:method-events-set">.events.set()</h4>
       <p>Attach an event handler function for one or more events to the selected elements.</p>
+      <pre><code>$('input').events.set("keydown", function(e) {
+    // Here, `e` will also contains `DOM` property which will normalize
+    // and add support (if not yet supported) the `key` property.
+    // All `e.DOM.key()` values are in lower case &rarr; <a href="http://tovic.github.io/text-editor/text-editor#section:key" target="_blank">[read more]</a>
+    // `this` refers to the current `$('button')` from the set.
+});</code></pre>
+      <ul>
+        <li><code>e.DOM.key()</code></li>
+        <li><code>e.DOM.control()</code></li>
+        <li><code>e.DOM.shift()</code></li>
+        <li><code>e.DOM.option()</code></li>
+        <li><code>e.DOM.meta()</code></li>
+      </ul>
+      <pre><code>$('button').events.set("click", function() {
+    alert('test click!');
+    return false; // this will trigger `e.preventDefault()` internally
+});</code></pre>
       <h4 id="section:method-events-reset">.events.reset()</h4>
       <p>Remove an event handler.</p>
+      <pre><code>$('button').events.reset("click");</code></pre>
       <h4 id="section:method-events-fire">.events.fire()</h4>
       <p>Execute all handlers and behaviors attached to the matched elements for the given event type.</p>
+      <pre><code>$('button').events.fire("click");</code></pre>
       <h4 id="section:method-events-capture">.events.capture()</h4>
       <p>Attach a handler to one or more events for all elements that match the selector, now or in the future, based on a specific set of root elements.</p>
+      <pre><code>$('#container').events.capture("click", 'button', function() {
+    $(this).append('&lt;button&gt;new button&lt;/button&gt;');
+});</code></pre>
       <h3 id="section:method-index">.index()</h3>
       <p>Return the current element index or to search for a given element from among the matched elements.</p>
       <h3 id="section:method-first">.first()</h3>
@@ -280,9 +338,6 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h4 id="section:utility-encode-url">.decode.url()</h4>
       <h4 id="section:utility-encode-json">.decode.json()</h4>
       <h4 id="section:utility-encode-s">.decode.s()</h4>
-      <h3 id="section:utility-ajax">.ajax()</h3>
-      <h4 id="section:utility-ajax-get">.ajax.get()</h4>
-      <h4 id="section:utility-ajax-post">.ajax.post()</h4>
       <h3 id="section:utility-path">.path</h3>
       <h3 id="section:utility-ready">.ready()</h3>
       <h3 id="section:utility-load">.load()</h3>

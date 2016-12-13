@@ -255,14 +255,6 @@
         return a;
     }
 
-    function timer_set(fn, i) {
-        return setTimeout(fn, i || 0);
-    }
-
-    function timer_reset(timer_set_fn) {
-        return clearTimeout(timer_set_fn);
-    }
-
     function closest(a, b) {
         while ((a = dom_parent(a)) && a !== b);
         return a;
@@ -270,7 +262,7 @@
 
     function el(em, node, attr) {
         em = em || 'div';
-        em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' ? (f = doc[create]('div'), f.innerHTML = em, f[first_child]) : doc[create](em)) : em;
+        em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' && count(em) >= 3 ? (f = doc[create]('div'), f.innerHTML = em, f[first_child]) : doc[create](em)) : em;
         if (is_plain_object(attr)) {
             for (i in attr) {
                 v = attr[i];
@@ -329,9 +321,42 @@
 
     function decode_value(s) {
         try {
-            s = s === 'true' ? true : s === 'false' ? false : s === 'null' ? null : +s + "" === s ? +s : /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/.test(s) ? $.decode.json(s) : s;
+            s = s === 'true' ? true : s === 'false' ? false : s === 'null' ? null : +s + "" === s ? +s : /^(?:\{[\w\W]*\}|\[[\w\W]*\]|"[\w\W]*")$/.test(s) ? $.decode.json(s) : s;
         } catch (e) {}
         return s;
+    }
+
+    var prop_contenteditable = 'contentEditable',
+        prop_designmode = 'designMode',
+        prop_maxlength = 'maxLength',
+        prop_nodename = 'nodeName',
+        prop_readonly = 'readOnly',
+        prop_tabindex = 'tabIndex',
+        prop_aliases = {
+            'check': 'checked',
+            'contenteditable': prop_contenteditable,
+            'class': 'className',
+            'designmode': prop_designmode,
+            'disable': 'disabled',
+            'for': 'htmlFor',
+            'hide': 'hidden',
+            'maxlength': prop_maxlength,
+            'nodename': prop_nodename,
+            'readonly': prop_readonly,
+            'select': 'selected',
+            'tabindex': prop_tabindex,
+            'content-edit': prop_contenteditable,
+            'content-editable': prop_contenteditable,
+            'design-mode': prop_designmode,
+            'max-length': prop_maxlength,
+            'node-name': prop_nodename,
+            'read-only': prop_readonly,
+            'spell-check': 'spellcheck',
+            'tab-index': prop_tabindex
+        };
+
+    function prop(s) {
+        return prop_aliases[s] || s;
     }
 
     function attr_set(node, a, b) {
@@ -340,7 +365,7 @@
                 attr_set(node, i, a[i]);
             }
         } else {
-            node[(b === null ? 'remove' : 'set') + 'Attribute'](a, encode_value(b));
+            node[(b === null ? 'remove' : 'set') + 'Attribute'](prop(a), encode_value(b));
         }
     }
 
@@ -358,7 +383,7 @@
         }
         o = [];
         for (i in a) {
-            i = a[i];
+            i = prop(a[i]);
             if (i = node.getAttribute(i)) {
                 o.push(decode_value(i));
             }
@@ -378,7 +403,7 @@
                     if (j[i]) attr_reset(node, j[i].name);
                 }
             } else {
-                node.removeAttribute(a);
+                node.removeAttribute(prop(a));
             }
         }
     }
@@ -546,11 +571,11 @@
     }
 
     function dom_next(node) {
-        return node && (node.nextElementSibling || node.nextSibling);
+        return node && node.nextElementSibling;
     }
 
     function dom_previous(node) {
-        return node && (node.previousElementSibling || node.previousSibling);
+        return node && node.previousElementSibling;
     }
 
     function dom_index(node) {
@@ -732,11 +757,6 @@
             json: JSON.parse,
             s: decode_value
         };
-
-        extend($.ajax = function() {}, {
-            get: function() {},
-            post: function() {}
-        });
 
         // current script path
         s = doc.currentScript;
@@ -961,39 +981,6 @@
             $$.id.e[i] = target.query;
         }
 
-        var prop_contenteditable = 'contentEditable',
-            prop_designmode = 'designMode',
-            prop_maxlength = 'maxLength',
-            prop_nodename = 'nodeName',
-            prop_readonly = 'readOnly',
-            prop_tabindex = 'tabIndex',
-            prop_aliases = {
-                'check': 'checked',
-                'contenteditable': prop_contenteditable,
-                'class': 'className',
-                'designmode': prop_designmode,
-                'disable': 'disabled',
-                'for': 'htmlFor',
-                'hide': 'hidden',
-                'maxlength': prop_maxlength,
-                'nodename': prop_nodename,
-                'readonly': prop_readonly,
-                'select': 'selected',
-                'tabindex': prop_tabindex,
-                'content-edit': prop_contenteditable,
-                'content-editable': prop_contenteditable,
-                'design-mode': prop_designmode,
-                'max-length': prop_maxlength,
-                'node-name': prop_nodename,
-                'read-only': prop_readonly,
-                'spell-check': 'spellcheck',
-                'tab-index': prop_tabindex
-            };
-
-        function prop(s) {
-            return prop_aliases[s] || s;
-        }
-
         function is_input(v) {
             return v[prop_nodename] && /^(button|input|select|textarea)$/.test(to_lower_case(v[prop_nodename])) || v[prop_contenteditable];
         }
@@ -1005,8 +992,8 @@
         }
 
         extend(target, {
-            $: function(s) {
-                return do_instance(to_array(target).concat(query(s)));
+            $: function(a, b) {
+                return do_instance(to_array(target).concat(query(a, b)));
             },
             item: function(i, f) {
                 o = to_array(target);
@@ -1031,10 +1018,6 @@
                 b = query(s, a);
                 return do_instance(b || f);
             },
-            is: function(s) { // TODO
-                if (!count(target)) return false;
-                return count(target.filter(s)) > 0;
-            },
             not: function(s, f) {
                 if (!is_set(s)) return do_instance([]);
                 f = is_set(f) ? f : [];
@@ -1050,6 +1033,7 @@
                 return do_instance(b || f);
             },
             has: function(s) {
+                if (!count(target.children())) return false;
                 return target.filter(function() {
                     return count(do_instance(this).find(s)) > 0;
                 });
@@ -1080,18 +1064,37 @@
             },
             set: function(a, b) {
                 t = is_function(b);
+                if (is_object(a)) {
+                    for (i in a) {
+                        target.set(i, a);
+                    }
+                    return target;
+                }
                 return each(target, function(v, k, s) {
                     v[prop(a)] = t ? b.call(v, k, s) : b;
                     do_fire_input(v);
                 });
             },
             reset: function(a) {
+                if (is_array(a)) {
+                    for (i = 0, j = count(a); i < j; ++i) {
+                        target.reset(a[i]);
+                    }
+                    return target;
+                }
                 return each(target, function(v) {
                     delete v[prop(a)];
                     do_fire_input(v);
                 });
             },
             get: function(a, b) {
+                if (is_array(a)) {
+                    var o = [];
+                    for (i = 0, j = count(a); i < j; ++i) {
+                        o.push(target.get(a[i]));
+                    }
+                    return count(o) ? o : (is_set(b) ? b : []);
+                }
                 a = prop(a);
                 return is_set(target[0][a]) ? target[0][a] : (is_set(b) ? b : false);
             },
@@ -1396,13 +1399,13 @@
             },
             x: event_exit,
             capture: function(event, get, fn) {
-                return target.events.set(event, function(e) {
-                    e = $$.event(e);
+                d = function(e) {
                     t = query(get, this);
                     if (has(t, e.target) !== -1 || (u = do_instance(e.target)) && has(t, u.closest(get)[0]) !== -1) {
                         return fn.call(t, e);
                     }
-                });
+                };
+                return target.events.set(event, d);
             }
         });
 
