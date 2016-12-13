@@ -1153,22 +1153,6 @@
                     v.textContent = t ? s.call(v, k, a) : s;
                 });
             },
-            value: function(a) {
-                if (!is_set(a)) {
-                    if (count(target) > 1) {
-                        o = [];
-                        each(target, function(v) {
-                            !v.disabled && o.push(v.checked || v.selected ? (v.value || true) : (v.value || ""));
-                        });
-                        return o;
-                    }
-                    return target[0].value;
-                }
-                t = is_function(a);
-                return each(target, function(v, k, s) {
-                    !v.disabled && (v.value = t ? a.call(v, k, s) : a);
-                });
-            }
             copy: function(s) {
                 return do_instance(dom_copy(target[0], s));
             },
@@ -1275,7 +1259,7 @@
         // alias of `$`
         target[DOM_NS_1] = target.$;
 
-        each(["click", "focus", "blur", "select", "submit"], function(e) {
+        each(["click", "change", "focus", "blur", "select", "submit"], function(e) {
             target[e] = function(fn) {
                 if (!is_set(fn)) {
                     return target.events.fire(e);
