@@ -323,13 +323,24 @@
         return em;
     }
 
+    function encode_value(s) {
+        return s === true ? 'true' : s === false ? 'false' : s === null ? 'null' : is_number(s) ? s + "" : is_plain_object(s) ? $.encode.json(s) : s;
+    }
+
+    function decode_value(s) {
+        try {
+            s = s === 'true' ? true : s === 'false' ? false : s === 'null' ? null : +s + "" === s ? +s : /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/.test(s) ? $.decode.json(s) : s;
+        } catch (e) {}
+        return s;
+    }
+
     function attr_set(node, a, b) {
         if (is_object(a)) {
             for (i in a) {
                 attr_set(node, i, a[i]);
             }
         } else {
-            node[(b === null ? 'remove' : 'set') + 'Attribute'](a, b);
+            node[(b === null ? 'remove' : 'set') + 'Attribute'](a, encode_value(b));
         }
     }
 
@@ -338,7 +349,7 @@
         if (!a) {
             for (i = 0, j = node[attributes], k = count(j); i < k; ++i) {
                 l = j[i];
-                o[l.name] = l.value;
+                o[l.name] = decode_value(l.value);
             }
             return count_object(o) ? (is_plain_object(b) ? extend(b, o) : o) : (is_set(b) ? b : {});
         }
@@ -349,7 +360,7 @@
         for (i in a) {
             i = a[i];
             if (i = node.getAttribute(i)) {
-                o.push(i);
+                o.push(decode_value(i));
             }
         }
         return count(o) ? o : (is_set(b) ? b : []);
@@ -615,6 +626,7 @@
         $.el = el;
         $.extend = extend;
         $.has = has;
+        $.noop = function() {};
         $.plug = {};
 
         function hook_set(event, fn, id) {
@@ -706,6 +718,20 @@
             d: dasherize,
             p: pascalize
         });
+
+        $.encode = {
+            base64: btoa,
+            url: encodeURIComponent,
+            json: JSON.stringify,
+            s: encode_value
+        };
+
+        $.decode = {
+            base64: atob,
+            url: decodeURIComponent,
+            json: JSON.parse,
+            s: decode_value
+        };
 
         extend($.ajax = function() {}, {
             get: function() {},
@@ -904,7 +930,7 @@
                 } else if (target === 'body') {
                     target = [body];
                 } else if (target[0] === '<' && target.slice(-1) === '>') {
-                    target = [el(target, false, scope_o)];
+                    target = [el(target, (is_plain_object(scope_o) && (scope_o.html || scope_o.text || false)), scope_o)];
                 } else if (/^[#.]?(?:\\.|[\w-]|[^\x00-\xa0])+$/.test(target)) {
                     if (target[0] === '#' && (e = scope[gebi](target.slice(1)))) {
                         target = [e];
@@ -922,17 +948,17 @@
                 target = [];
             }
             target = arr_unique(to_array(target));
-            target.$ = [target_o, scope_o || null];
+            target.query = [target_o, scope_o || null];
             return target;
         }
 
         target = query(target);
-        if ((i = has($$.id.e, target.$)) !== -1) {
+        if ((i = has($$.id.e, target.query)) !== -1) {
             target.id = i;
         } else {
             i = uid('dom:');
             target.id = i;
-            $$.id.e[i] = target.$;
+            $$.id.e[i] = target.query;
         }
 
         var prop_contenteditable = 'contentEditable',
@@ -979,12 +1005,19 @@
         }
 
         extend(target, {
+            $: function(s) {
+                return do_instance(to_array(target).concat(query(s)));
+            },
+            item: function(i, f) {
+                o = to_array(target);
+                return is_set(i) ? (o[i] || (is_set(f) ? f : false)) : (count(o) ? o : (is_set(f) ? f : []));
+            },
             each: function(fn) {
                 return each(target, function(v, k, a) {
-                    fn.call(v, v, k, a);
+                    fn.call(v, k, a);
                 });
             },
-            is: function(s, f) {
+            filter: function(s, f) {
                 if (!is_set(s)) return target;
                 f = is_set(f) ? f : [];
                 if (is_function(s)) {
@@ -997,6 +1030,10 @@
                 a = dom_parent(target[0]);
                 b = query(s, a);
                 return do_instance(b || f);
+            },
+            is: function(s) { // TODO
+                if (!count(target)) return false;
+                return count(target.filter(s)) > 0;
             },
             not: function(s, f) {
                 if (!is_set(s)) return do_instance([]);
@@ -1012,6 +1049,11 @@
                 b = query(':not(' + s + ')', a);
                 return do_instance(b || f);
             },
+            has: function(s) {
+                return target.filter(function() {
+                    return count(do_instance(this).find(s)) > 0;
+                });
+            },
             range: function(a, b) {
                 return do_instance(target.slice(a, b));
             },
@@ -1021,7 +1063,7 @@
                 }
                 t = is_function(s);
                 return each(target, function(v, k, a) {
-                    content_set(v, t ? s.call(v, v, k, a) : s);
+                    content_set(v, t ? s.call(v, k, a) : s);
                 });
             },
             text: function(s) {
@@ -1030,7 +1072,7 @@
                 }
                 t = is_function(s);
                 return each(target, function(v, k, a) {
-                    v.textContent = t ? s.call(v, v, k, a) : s;
+                    v.textContent = t ? s.call(v, k, a) : s;
                 });
             },
             copy: function(s) {
@@ -1039,7 +1081,7 @@
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
-                    v[prop(a)] = t ? b.call(v, v, k, s) : b;
+                    v[prop(a)] = t ? b.call(v, k, s) : b;
                     do_fire_input(v);
                 });
             },
@@ -1062,7 +1104,7 @@
             data: function(f) {
                 return data_get(target[0], 0, f);
             },
-            events: function() {},
+            events: $$.noop,
             index: function(i) {
                 if (is_set(i)) {
                     return do_instance(target[i]);
@@ -1083,12 +1125,12 @@
                 each(target, function(v) {
                     o = o.concat(dom_children(v));
                 });
-                return do_instance(o).is(s);
+                return do_instance(o).filter(s);
             },
             kin: function(s) {
                 var o = [],
                     t = target[0];
-                each(target.parent().children().is(s), function(v) {
+                each(target.parent().children(s), function(v) {
                     v !== t && o.push(v);
                 });
                 return do_instance(o);
@@ -1103,15 +1145,15 @@
             find: function(s) {
                 var o = [];
                 each(target, function(v) {
-                    o = o.concat(query(is_set(s) ? s : '*', v))
+                    o = o.concat(query(is_set(s) ? s : '*', v));
                 });
                 return do_instance(o);
             },
             next: function(s) {
-                return do_instance(dom_next(target[0])).is(s);
+                return do_instance(dom_next(target[0])).filter(s);
             },
             previous: function(s) {
-                return do_instance(dom_previous(target[0])).is(s);
+                return do_instance(dom_previous(target[0])).filter(s);
             },
             prepend: function(s) {
                 return each(target, function(v) {
@@ -1133,9 +1175,24 @@
                     dom_after(v, el(s));
                 });
             },
-            remove: function() {},
-            wrap: function() {},
-            unwrap: function() {},
+            remove: function() {
+                return each(target, function(v) {
+                    dom_reset(v);
+                });
+            },
+            wrap: function(s) {
+                return each(target, function(v) {
+                    t = query(s)[0];
+                    dom_before(v, t);
+                    dom_set(t, v);
+                });
+            },
+            unwrap: function(s) {
+                return each(target, function(v) {
+                    t = is_set(s) ? do_instance(v).closest(s) : [dom_parent(v)];console.log(t)
+                    dom_replace(t[0], v);
+                });
+            },
             css: function(a, b) {
                 if (!is_set(a)) {
                     return css(target[0]);
@@ -1173,10 +1230,7 @@
             },
             toggle: function() {
                 return each(target, function(v) {
-                    h = v.style.display === 'none' || css(v, 'display') === 'none';
-                    css(v, {
-                        'display': h ? null : 'none'
-                    });
+                    return target[css(v, 'display') === 'none' ? 'show' : 'hide']();
                 });
             },
             offset: function(o) {
@@ -1211,14 +1265,24 @@
             },
             value: function(a) {
                 if (!is_set(a)) {
+                    if (count(target) > 1) {
+                        o = [];
+                        each(target, function(v) {
+                            !v.disabled && o.push(v.checked || v.selected ? (v.value || true) : (v.value || ""));
+                        });
+                        return o;
+                    }
                     return target[0].value;
                 }
                 t = is_function(a);
                 return each(target, function(v, k, s) {
-                    v.value = t ? a.call(v, v, k, s) : a;
+                    !v.disabled && (v.value = t ? a.call(v, k, s) : a);
                 });
             }
         });
+
+        // alias of `$`
+        target[DOM_NS_1] = target.$;
 
         each(["click", "focus", "blur", "select", "submit"], function(e) {
             target[e] = function(fn) {
@@ -1235,7 +1299,7 @@
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
-                    attr_set(v, a, t ? b.call(v, v, k, s) : b);
+                    attr_set(v, a, t ? b.call(v, k, s) : b);
                 });
             },
             reset: function(a) {
@@ -1252,7 +1316,7 @@
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
-                    data_set(v, a, t ? b.call(v, v, k, s) : b);
+                    data_set(v, a, t ? b.call(v, k, s) : b);
                 });
             },
             reset: function(a) {
@@ -1269,7 +1333,7 @@
             set: function(a) {
                 t = is_function(a);
                 return each(target, function(v, k, s) {
-                    class_set(v, t ? a.call(v, v, k, s) : a);
+                    class_set(v, t ? a.call(v, k, s) : a);
                 });
             },
             reset: function(a) {
@@ -1280,7 +1344,7 @@
             toggle: function(a) {
                 t = is_function(a);
                 return each(target, function(v, k, s) {
-                    class_toggle(v, t ? a.call(v, v, k, s) : a);
+                    class_toggle(v, t ? a.call(v, k, s) : a);
                 });
             },
             get: function(a, b) {
@@ -1325,7 +1389,8 @@
                 }), delete (fn ? a[b][d] : a[b]), target;
             },
             fire: function(event, data) {
-                return each(target, function(v) {
+                return each(target, function() {
+                    v = this;
                     event_fire.call(v, event, v, data);
                 });
             },
@@ -1341,8 +1406,9 @@
             }
         });
 
+        // apply all plugin(s)
         for (i in $$.plug) {
-            target[i] = $$.plug[i];
+            target.prototype[i] = $$.plug[i];
         }
 
         return target;

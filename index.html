@@ -50,27 +50,56 @@
       <h2 id="section:configure">Configure</h2>
       <p>Configuration is not available.</p>
       <h2 id="section:method">Methods</h2>
-      <p>Initialize a <code>DOM</code> instance with <code>$(<var>selector</var>)</code> or <code>DOM(<var>selector</var>)</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
+      <p>Initialize a <em>DOM</em> instance with <code>$(<var>selector</var>)</code> or <code>DOM(<var>selector</var>)</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
       <pre><code>$('#foo');</code></pre>
+      <h3 id="section:method-$">.$()</h3>
+      <p>Create a new <em>DOM</em> object with elements added to the current set of matched elements.</p>
+      <pre><code>var $headers = $('h1, h2, h3, h4'); // `$headers` is `[&lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;h4&gt;]`
+
+$headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;h4&gt;, &lt;h5&gt;, &lt;h6&gt;]`</code></pre>
+      <h3 id="section:method-item">.item()</h3>
+      <p>Convert <em>DOM</em> object into plain array.</p>
+      <pre><code>console.log($('body'));
+
+// [&lt;body&gt;]{
+//     query: ['body', null],
+//     id: 'dom:202814968633',
+//     $: function() { &hellip; },
+//     item: function() { &hellip; },
+//     each: function() { &hellip; },
+//     &hellip;
+// };</code></pre>
+      <pre><code>console.log($('body').item());
+
+// [&lt;body&gt;];</code></pre>
+      <pre><code>console.log($('body').item(0));
+
+// &lt;body&gt;</code></pre>
       <h3 id="section:method-html">.each()</h3>
       <p>Iterate over a <em>DOM</em> object, executing a function for each matched element.</p>
-      <pre><code>$('.foo').each(function(v, k, a) {
-    // `v` refers to the current array item
-    // `k` refers to the current array index
-    // `a` refers to the array
+      <pre><code>$('.foo').each(function(key, source) {
+    // `key` refers to the current array index
+    // `source` refers to the array
+    // `this` refers to the current array item
 });</code></pre>
-      <h3 id="section:method-is">.is()</h3>
+      <h3 id="section:method-filter">.filter()</h3>
       <p>Reduce the set of matched elements to those that match the selector or pass the function&rsquo;s test.</p>
-      <pre><code>$('h2').is('[id]'); // &hellip; is the same as `$('h2[id]')`</code></pre>
-      <pre><code>$('h2').is(function() {
+      <pre><code>$('h2').filter('[id]'); // &hellip; is the same as `$('h2[id]')`</code></pre>
+      <pre><code>$('h2').filter(function() {
     return this.id === '#foo';
 }); // &hellip; is the same as `$('h2#foo')`</code></pre>
+      <h3 id="section:method-is">.is()</h3>
+      <p>Check the current matched set of elements against a selector, element, or <em>DOM</em> object and return <code>true</code> if at least one of these elements matches the given arguments.</p>
+      <pre><code>if ($('h2').is('[id]')) { /* `h2` has an ID attribute */ }</code></pre>
       <h3 id="section:method-not">.not()</h3>
       <p>Remove elements from the set of matched elements.</p>
       <pre><code>$('h2').not('[id]'); // &hellip; is the same as `$('h2:not([id])')`</code></pre>
       <pre><code>$('h2').not(function() {
     return this.id === '#foo';
 }); // &hellip; is the same as `$('h2:not(#foo)')`</code></pre>
+      <h3 id="section:method-has">.has()</h3>
+      <p>Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.</p>
+      <pre><code>$('li').has('ul').classes.set('parent-menu');</code></pre>
       <h3 id="section:method-range">.range()</h3>
       <p>Reduce the set of matched elements to a subset specified by a range of indices.</p>
       <pre><code>$('li').range(0, 4).css('color', 'red');</code></pre>
@@ -80,13 +109,20 @@
       <pre><code>$('#foo').html('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&lt;b&gt;bar&lt;/b&gt;`</code></pre>
       <h3 id="section:method-text">.text()</h3>
       <p>Get the combined text contents of each element in the set of matched elements, including their descendants, or set the text contents of the matched elements.</p>
+      <pre><code>$('#foo').text(); // get text content of `#foo`</code></pre>
+      <pre><code>$('#foo').text('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&amp;lt;b&amp;gt;bar&amp;lt;/b&amp;gt;`</code></pre>
       <h3 id="section:method-copy">.copy()</h3>
-      <p>Create a deep copy (optional) of the set of matched elements.</p>
+      <p>Create a deep copy of the set of matched elements.</p>
+      <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt; &hellip; &lt;/li&gt; &hellip; &lt;/ul&gt;`</code></pre>
+      <pre><code>var $copy = $('ul').copy(false); // return `&lt;ul&gt;&lt;/ul&gt;`</code></pre>
       <h3 id="section:method-set">.set()</h3>
       <p>Set one or more properties for every matched element.</p>
+      <pre><code>$('input[type="checkbox"]').set('checked', true);</code></pre>
       <h3 id="section:method-reset">.reset()</h3>
+      <pre><code>$('input[type="checkbox"]').reset('checked');</code></pre>
       <p>Remove one or more properties for the set of matched elements.</p>
       <h3 id="section:method-get">.get()</h3>
+      <pre><code>$('input[type="checkbox"]').set('checked', false);</code></pre>
       <p>Get the value of a property for the first element in the set of matched elements.</p>
       <h3 id="section:method-attributes">.attributes()</h3>
       <p>Get all of the available HTML attributes for the first element in the set of matched elements.</p>
@@ -166,7 +202,7 @@
       <h3 id="section:method-toggle">.toggle()</h3>
       <p>Display or hide the matched elements.</p>
       <h3 id="section:method-offset">.offset()</h3>
-      <p>Get the current coordinates of the first element, or set the coordinates of every element, in the set of matched elements, relative to its parent elements.</p>
+      <p>Get the current coordinates of the first element, or set the coordinates of every element, in the set of matched elements, relative to the document or to the offset parent.</p>
       <h3 id="section:method-size">.size()</h3>
       <p>Get the current computed width and height for the first element in the set of matched elements.</p>
       <h3 id="section:method-value">.value()</h3>
@@ -182,17 +218,18 @@
       <h3 id="section:method-submit">.submit()</h3>
       <p>Bind an event handler to the <code>submit</code> JavaScript event, or trigger that event on an element.</p>
       <h2 id="section:property">Properties</h2>
+      <h3 id="section:property-$">.query</h3>
       <h3 id="section:property-id">.id</h3>
-      <h3 id="section:property-$">.$</h3>
       <h2 id="section:utility">Utilities</h2>
       <h3 id="section:utility-version">.version</h3>
       <h3 id="section:utility-DOM">.DOM</h3>
       <h3 id="section:utility-id">.id</h3>
-      <h3 id="section:utility-plug">.plug</h3>
       <h3 id="section:utility-edge">.edge()</h3>
       <h3 id="section:utility-el">.el()</h3>
       <h3 id="section:utility-extend">.extend()</h3>
       <h3 id="section:utility-has">.has()</h3>
+      <h3 id="section:utility-noop">.noop()</h3>
+      <h3 id="section:utility-plug">.plug</h3>
       <h3 id="section:utility-hooks">.hooks()</h3>
       <h4 id="section:utility-hooks-set">.hooks.set()</h4>
       <h4 id="section:utility-hooks-reset">.hooks.reset()</h4>
@@ -202,16 +239,27 @@
       <h4 id="section:utility-trim-after">.trim.after()</h4>
       <h3 id="section:utility-is">.is</h3>
       <h4 id="section:utility-is-a">.is.a()</h4>
+      <p>Is array.</p>
       <h4 id="section:utility-is-b">.is.b()</h4>
+      <p>Is boolean.</p>
       <h4 id="section:utility-is-e">.is.e()</h4>
+      <p>Is HTML element.</p>
       <h4 id="section:utility-is-f">.is.f()</h4>
+      <p>Is function.</p>
       <h4 id="section:utility-is-i">.is.i()</h4>
+      <p>Is number.</p>
       <h4 id="section:utility-is-n">.is.n()</h4>
+      <p>Is null.</p>
       <h4 id="section:utility-is-o">.is.o()</h4>
+      <p>Is array or any object.</p>
       <h5 id="section:utility-is-o-o">.is.o.o()</h5>
+      <p>Is plain object.</p>
       <h4 id="section:utility-is-r">.is.r()</h4>
+      <p>Is regular expression.</p>
       <h4 id="section:utility-is-s">.is.s()</h4>
+      <p>Is string.</p>
       <h4 id="section:utility-is-x">.is.x()</h4>
+      <p>Is not set.</p>
       <h3 id="section:utility-to">.to</h3>
       <h4 id="section:utility-to-a">.to.a()</h4>
       <h5 id="section:utility-to-a-u">.to.a.u()</h5>
@@ -222,6 +270,16 @@
       <h5 id="section:utility-to-s-c">.to.s.c()</h5>
       <h5 id="section:utility-to-s-d">.to.s.d()</h5>
       <h5 id="section:utility-to-s-p">.to.s.p()</h5>
+      <h3 id="section:utility-encode">.encode</h3>
+      <h4 id="section:utility-encode-base64">.encode.base64()</h4>
+      <h4 id="section:utility-encode-url">.encode.url()</h4>
+      <h4 id="section:utility-encode-json">.encode.json()</h4>
+      <h4 id="section:utility-encode-s">.encode.s()</h4>
+      <h3 id="section:utility-decode">.decode</h3>
+      <h4 id="section:utility-encode-base64">.decode.base64()</h4>
+      <h4 id="section:utility-encode-url">.decode.url()</h4>
+      <h4 id="section:utility-encode-json">.decode.json()</h4>
+      <h4 id="section:utility-encode-s">.decode.s()</h4>
       <h3 id="section:utility-ajax">.ajax()</h3>
       <h4 id="section:utility-ajax-get">.ajax.get()</h4>
       <h4 id="section:utility-ajax-post">.ajax.post()</h4>

@@ -56,8 +56,8 @@
       <button onclick="console.log($('div').children().css('border','1px dashed red'));">children of <code>div</code></button>
       <button onclick="console.log($('div').find('*').css('border','1px dashed green'));">recursive children of <code>div</code></button>
       <button onclick="$('h1').html('click me!').events.set('click',function(){console.log(this);$(this).css('font-style','italic')});">test <code>this</code> scope of all <code>h1</code> elements</button>
-      <button onclick="console.log($('h1').css('color',null).is('.h1-a').css('color','red'));">test filter 1 (apply style to <code>.h1-a</code>) only</button>
-      <button onclick="console.log($('h1').css('color',null).is(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2 (apply style to <code>h1</code> elements with class name match to <code>/^h1\-[bc]$/</code>)</button>
+      <button onclick="console.log($('h1').css('color',null).filter('.h1-a').css('color','red'));">test filter 1 (apply style to <code>.h1-a</code>) only</button>
+      <button onclick="console.log($('h1').css('color',null).filter(function(){return /^h1\-[bc]$/.test($(this).attributes.get('class'))}).css('color','red'));">test filter 2 (apply style to <code>h1</code> elements with class name match to <code>/^h1\-[bc]$/</code>)</button>
       <button onclick="$('*').css(false);">remove inline styles on all elements</button>
       <button onclick="$('a').events.set('click',false);">disable link</button>
       <button onclick="$('a').events.reset('click');">enable link</button>

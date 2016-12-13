@@ -6,6 +6,7 @@
     <script src="../d-o-m.min.js"></script>
   </head>
   <body>
+    <p>Open console!</p>
     <ul>
       <li>red</li>
       <li>green</li>
@@ -13,11 +14,10 @@
       <li>yellow</li>
     </ul>
     <script>
-    $('li').each(function() {
-        if ($(this).is(':first-child')) {
-            $(this).css('color', 'red');
-        }
-    });
+    console.log($('li'));
+    console.log($('li').item());
+    console.log($('li').item(2));
+    console.log($('li').item(10));
     </script>
   </body>
 </html>
