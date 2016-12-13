@@ -6,7 +6,7 @@
     <title>DOM Library</title>
     <link href="favicon.ico" rel="shortcut icon">
     <script src="d-o-m.min.js"></script>
-    <style>*{margin:0;padding:0}b,h1,h2,h3,h4,h5,h6,strong{font-weight:700}em,i,var{font-style:italic}body,html{background:#fff;color:#000}body{font:normal normal 15px/1.5 "Times New Roman",Times,Serif;padding:5%;margin-right:15em}footer,section{margin:5% 0 0}a{color:#00f;text-decoration:none}a:hover{text-decoration:underline}a:active,a:focus{color:red}h1{font-size:250%}h2{font-size:170%}h3{font-size:120%}h4{font-size:100%}aside h3,h5{font-size:110%}h6{font-size:80%}blockquote,h1,h2,h3,h4,h5,h6,ol,p,pre,ul{margin:1rem 0 0}h1,ol ol,ol ul,ul ol,ul ul{margin-top:0}ol,ul{margin-left:2em;padding-left:0}ul li{list-style:square}code{font-family:"Courier New",Courier,"Nimbus Mono L",Monospace;font-size:86%}blockquote{padding-left:1em}pre{background:#000;color:#fff;padding:1em;white-space:pre-wrap;word-wrap:break-word;font-style:normal;font-size:90%;line-height:1em}aside{position:absolute;top:5%;right:5%;width:12em}@media (max-width:800px){body{margin-right:0}aside{position:static;margin-top:5%}}</style>
+    <style>*{margin:0;padding:0}b,h1,h2,h3,h4,h5,h6,strong{font-weight:700}em,i,var{font-style:italic}body,html{background:#fff;color:#000}html{font:normal normal 18px/1.5 "Times New Roman",Times,Serif}body{padding:5%;margin-right:15em}footer,section{margin:5% 0 0}a{color:#00f;text-decoration:none}a:hover{text-decoration:underline}a:active,a:focus{color:red}h1{font-size:250%}h2{font-size:170%}aside h3,h3,h5{font-size:110%}h4{font-size:100%}h6{font-size:80%}blockquote,h1,h2,h3,h4,h5,h6,ol,p,pre,ul{margin:1rem 0 0}h1,ol ol,ol ul,ul ol,ul ul{margin-top:0}ol,ul{margin-left:2em;padding-left:0}ul li{list-style:square}code{font-family:"Courier New",Courier,"Nimbus Mono L",Monospace;font-size:86%}blockquote{padding-left:1em;border-left:4px solid}pre{background:#000;color:#fff;padding:1em;white-space:pre-wrap;word-wrap:break-word;font-style:normal;font-size:90%;line-height:1em}aside{position:absolute;top:5%;right:5%;width:12em}@media (max-width:800px){html{font-size:15px}body{margin-right:0}aside{position:static;margin-top:5%}}</style>
   </head>
   <body>
     <header>
@@ -313,12 +313,12 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('ul').toggle();</code></pre>
       <h3 id="section:method-offset">.offset()</h3>
       <p>Get the current coordinates of the first element, or set the coordinates of every element, in the set of matched elements, relative to the document or to the offset parent.</p>
-      <pre><code>console.log($('ul').offset());</code></pre>
-      <pre><code>console.log($('ul').offset(true));</code></pre>
+      <pre><code>console.log($('ul').offset()); // return `{x: 10, y: 20}`</code></pre>
+      <pre><code>console.log($('ul').offset(true)); // &hellip; relative to parent element</code></pre>
       <h3 id="section:method-size">.size()</h3>
       <p>Get the current computed width and height for the first element in the set of matched elements.</p>
-      <pre><code>console.log($('ul').size());</code></pre>
-      <pre><code>console.log($('ul').size(true));</code></pre>
+      <pre><code>console.log($('ul').size()); // return `{x: 10, y: 20}`</code></pre>
+      <pre><code>console.log($('ul').size(true)); // &hellip; include padding and border width</code></pre>
       <h2 id="section:property">Properties</h2>
       <pre><code>var $link = $('nav a + ul');</code></pre>
       <h3 id="section:property-$">.query</h3>
