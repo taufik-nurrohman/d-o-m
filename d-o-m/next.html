@@ -11,19 +11,32 @@
       <li>orange</li>
       <li><mark>yellow</mark></li>
       <li>green</li>
-      <li>blue</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
       <li>indigo</li>
     </ul>
     <ul>
       <li>red</li>
       <li>orange</li>
       <li><mark>yellow</mark></li>
-      <li>green</li>
-      <li>blue</li>
+      <li>green!</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
       <li>indigo</li>
     </ul>
     <script>
-    $('li').has('mark').css('border', '1px solid red');
+    $('mark').parent().next().css('color', 'red');
+    $('mark').parent().next(function() {
+        return $(this).text() === 'green!';
+    }).css('font-weight', 'bold');
     </script>
   </body>
 </html>

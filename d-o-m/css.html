@@ -22,9 +22,17 @@
       <li>blue</li>
       <li>indigo</li>
     </ul>
+    <p>
+      <button onclick="console.log($('ul').css());">inspect</button>
+      <button onclick="console.log($('ul').css('width'));">inspect <code>width</code> value</button>
+      <button onclick="console.log($('ul').css(['width','height']));">inspect <code>width</code> and <code>height</code> value</button>
+    </p>
     <script>
-    $('li').click(function() {
-        $(this).html('<b>replaced!</b>');
+    $('li').each(function() {
+        $(this).css('background-color', $(this).text());
+    }).css({
+        'text-decoration': 'underline',
+        'font-style': 'italic'
     });
     </script>
   </body>

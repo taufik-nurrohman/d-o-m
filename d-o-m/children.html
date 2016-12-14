@@ -9,23 +9,31 @@
     <ul>
       <li>red</li>
       <li>orange</li>
-      <li>yellow</li>
+      <li><mark>yellow</mark></li>
       <li>green</li>
-      <li>blue</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
       <li>indigo</li>
     </ul>
     <ul>
       <li>red</li>
       <li>orange</li>
-      <li>yellow</li>
+      <li><mark>yellow</mark></li>
       <li>green</li>
-      <li>blue</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
       <li>indigo</li>
     </ul>
     <script>
-    $('li').click(function() {
-        $(this).html('<b>replaced!</b>');
-    });
+    $('ul').children().css('border', '1px solid');
     </script>
   </body>
 </html>

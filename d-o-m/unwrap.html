@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <div style="border:1px solid red;margin:1px;">
+      <div style="border:1px solid red;margin:1px;">
+        <ul>
+          <li>red</li>
+          <li>orange</li>
+          <li>yellow</li>
+          <li>green</li>
+          <li>blue</li>
+          <li>indigo</li>
+        </ul>
+      </div>
+    </div>
+    <div style="border:1px solid red;margin:1px;">
+      <div style="border:1px solid red;margin:1px;">
+        <ul>
+          <li>red</li>
+          <li>orange</li>
+          <li>yellow</li>
+          <li>green</li>
+          <li>blue</li>
+          <li>indigo</li>
+        </ul>
+      </div>
+    </div>
+    <p>
+      <button onclick="$('ul').unwrap('div');">unwrap</button>
+    </p>
+  </body>
+</html>

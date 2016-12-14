@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <p>
+      <input type="checkbox">
+      <input type="checkbox" checked>
+      <input type="radio">
+      <input type="radio" checked>
+      <input type="checkbox" value="1" checked>
+      <input type="checkbox" value="1">
+      <input type="radio" value="1">
+      <input type="radio" value="1" checked>
+      <input type="checkbox" value="on" checked>
+      <input type="checkbox" value="on">
+      <input type="radio" value="on">
+      <input type="radio" value="on" checked>
+      <input type="checkbox" disabled>
+      <input type="checkbox" checked disabled>
+      <input type="radio" disabled>
+      <input type="radio" checked disabled>
+      <input type="checkbox" value="1" disabled>
+      <input type="checkbox" value="1" checked disabled>
+      <input type="radio" value="1" disabled>
+      <input type="radio" value="1" checked disabled>
+      <input type="checkbox" value="on" disabled>
+      <input type="checkbox" value="on" checked disabled>
+      <input type="radio" value="on" disabled>
+      <input type="radio" value="on" checked disabled>
+    </p>
+    <p>
+      <select>
+        <option>option 1</option>
+        <option>option 2</option>
+        <option>option 3</option>
+      </select>
+      <select>
+        <option>option 1</option>
+        <option selected>option 2</option>
+        <option>option 3</option>
+      </select>
+      <select disabled>
+        <option>option 1</option>
+        <option>option 2</option>
+        <option>option 3</option>
+      </select>
+      <select disabled>
+        <option>option 1</option>
+        <option selected>option 2</option>
+        <option>option 3</option>
+      </select>
+      <!--
+      <select multiple>
+        <option>option 1</option>
+        <option>option 2</option>
+        <option>option 3</option>
+      </select>
+      <select multiple>
+        <option>option 1</option>
+        <option selected>option 2</option>
+        <option selected>option 3</option>
+      </select>
+      <select multiple disabled>
+        <option>option 1</option>
+        <option>option 2</option>
+        <option>option 3</option>
+      </select>
+      <select multiple disabled>
+        <option>option 1</option>
+        <option selected>option 2</option>
+        <option selected>option 3</option>
+      </select>
+      -->
+    </p>
+    <p>
+      <button onclick="console.log(get_1());"><code>.value()</code></button>
+      <button onclick="console.log(get_2());"><code>.attributes.get('value')</code></button>
+    </p>
+    <script>
+    function get_1() {
+        var o = {};
+        $('input, select').each(function() {
+            o[this.outerHTML] = $(this).value();
+        });
+        return o;
+    }
+    function get_2() {
+        var o = {};
+        $('input, select').each(function() {
+            o[this.outerHTML] = $(this).attributes.get('value');
+        });
+        return o;
+    }
+    </script>
+  </body>
+</html>

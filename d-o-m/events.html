@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <h1>heading 1</h1>
+    <h2>heading 2</h2>
+    <h3>heading 3</h3>
+    <h4>heading 4</h4>
+    <h5>heading 5</h5>
+    <h6>heading 6</h6>
+    <p>
+      <button onclick="$('h1,h2,h3,h4,h5,h6').events.set('click',function(e){alert($(this).text())});">add click event</button>
+      <button onclick="$('h1,h2,h3,h4,h5,h6').events.set('click',test);">add <code>test()</code> to click event</button>
+      <button onclick="$('h1,h2,h3,h4,h5,h6').events.reset('click', test);">remove <code>test()</code> from click event <mark>TODO</mark></button>
+      <button onclick="$('h1,h2,h3,h4,h5,h6').events.reset('click');">remove click event</button>
+    </p>
+    <script>
+    function test() {
+        alert('from `test()`');
+    }
+    </script>
+  </body>
+</html>

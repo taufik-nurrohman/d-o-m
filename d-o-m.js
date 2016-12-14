@@ -2,7 +2,8 @@
 
 (function(win, doc, DOM_NS) {
 
-    var replace = 'replace',
+    var html = doc.documentElement,
+        replace = 'replace',
         create = 'createElement',
         first_child = 'firstChild',
         ge = 'getElement',
@@ -231,9 +232,9 @@
         return a;
     }
 
-    function each(a, fn) {
+    function each(a, fn, as_array) {
         var i, j, k;
-        if (is_array(a)) {
+        if (as_array || is_array(a)) {
             for (i = 0, j = count(a); i < j; ++i) {
                 k = fn(a[i], i, a);
                 if (k === true) {
@@ -933,8 +934,7 @@
 
         function query(target, scope) {
             if (target instanceof DOM) return target;
-            var html = doc.documentElement,
-                head = doc.head,
+            var head = doc.head,
                 body = doc.body,
                 target_o = target,
                 scope_o = scope;
@@ -991,7 +991,7 @@
 
         extend(target, {
             $: function(a, b) {
-                return do_instance(to_array(target).concat(query(a, b)));
+                return do_instance(target.concat(query(a, b)));
             },
             item: function(i, f) {
                 o = to_array(target);
@@ -1000,7 +1000,7 @@
             each: function(fn) {
                 return each(target, function(v, k, a) {
                     fn.call(v, k, a);
-                });
+                }, 1);
             },
             is: function(s, f) {
                 if (!is_set(s)) return target;
@@ -1009,12 +1009,16 @@
                     var o = [];
                     each(target, function(v, i, a) {
                         s.call(v, i, a) && o.push(v);
-                    });
+                    }, 1);
                     return do_instance(count(o) ? o : f);
                 }
-                a = dom_parent(target[0]);
-                b = query(s, a);
-                return do_instance(b || f);
+                var o = [];
+                each(target, function(v) {
+                    a = dom_parent(v);
+                    b = query(s, a);
+                    count(b) && (o = o.concat(b));
+                }, 1);
+                return do_instance(o || f);
             },
             not: function(s, f) {
                 if (!is_set(s)) return do_instance([]);
@@ -1023,11 +1027,15 @@
                     var o = [];
                     each(target, function(v, i, a) {
                         !s.call(v, i, a) && o.push(v);
-                    });
+                    }, 1);
                     return do_instance(count(o) ? o : f);
                 }
-                a = dom_parent(target[0]);
-                b = query(':not(' + s + ')', a);
+                var o = [];
+                each(target, function(v) {
+                    a = dom_parent(v);
+                    b = query(':not(' + s + ')', a);
+                    count(b) && (o = o.concat(b));
+                }, 1);
                 return do_instance(b || f);
             },
             has: function(s) {
@@ -1050,7 +1058,7 @@
                 return each(target, function(v, k, s) {
                     v[prop(a)] = t ? b.call(v, k, s) : b;
                     do_fire_input(v);
-                });
+                }, 1);
             },
             reset: function(a) {
                 if (is_array(a)) {
@@ -1062,7 +1070,7 @@
                 return each(target, function(v) {
                     delete v[prop(a)];
                     do_fire_input(v);
-                });
+                }, 1);
             },
             get: function(a, b) {
                 if (is_array(a)) {
@@ -1076,15 +1084,35 @@
                 return is_set(target[0][a]) ? target[0][a] : (is_set(b) ? b : false);
             },
             attributes: function(f) {
-                return attr_get(target[0], 0, f);
+                var o = [];
+                each(target, function(v) {
+                    o = o.concat(attr_get(v, 0, []));
+                }, 1);
+                return count(o) ? o : (is_set(f) ? f : []);
             },
             classes: function(f) {
-                return class_get(target[0], 0, f);
+                var o = [];
+                each(target, function(v) {
+                    o = o.concat(class_get(v, 0, []));
+                }, 1);
+                return count(o) ? o : (is_set(f) ? f : []);
             },
             data: function(f) {
-                return data_get(target[0], 0, f);
+                var o = [];
+                each(target, function(v) {
+                    o = o.concat(data_get(v, 0, []));
+                }, 1);
+                return count(o) ? o : (is_set(f) ? f : []);
             },
             events: $$.noop,
+            traverse: function(s) {
+                var o = [];
+                t = is_function(s);
+                each(target, function(v, i) {
+                    (t && (f = s.call(v, i)) || (f = v[s])) && o.push(f);
+                }, 1);
+                return do_instance(o);
+            },
             index: function(i) {
                 if (is_set(i)) {
                     return do_instance(target[i]);
@@ -1098,42 +1126,49 @@
                 return do_instance(target.pop());
             },
             parent: function() {
-                return do_instance(dom_parent(target[0]));
+                return target.traverse(function() {
+                    return dom_parent(this);
+                });
             },
             children: function(s) {
                 var o = [];
                 each(target, function(v) {
-                    o = o.concat(dom_children(v));
-                });
+                    count(v = dom_children(v)) && (o = o.concat(v));
+                }, 1);
                 return do_instance(o).is(s);
             },
             kin: function(s) {
-                var o = [],
-                    t = target[0];
-                each(target.parent().children(s), function(v) {
-                    v !== t && o.push(v);
-                });
+                var o = [];
+                each(target, function(v) {
+                    each(do_instance(v).parent().children(s), function(w) {
+                        w !== v && o.push(w);
+                    }, 1);
+                }, 1);
                 return do_instance(o);
             },
             closest: function(s) {
                 var o = [];
                 each(target, function(v) {
                     (t = dom_closest(v, s)) && o.push(t);
-                });
+                }, 1);
                 return do_instance(o);
             },
             find: function(s) {
                 var o = [];
                 each(target, function(v) {
                     o = o.concat(query(is_set(s) ? s : '*', v));
-                });
+                }, 1);
                 return do_instance(o);
             },
             next: function(s) {
-                return do_instance(dom_next(target[0])).is(s);
+                return target.traverse(function() {
+                    return dom_next(this);
+                }).is(s);
             },
             previous: function(s) {
-                return do_instance(dom_previous(target[0])).is(s);
+                return target.traverse(function() {
+                    return dom_previous(this);
+                }).is(s);
             },
             html: function(s) {
                 if (!is_set(s)) {
@@ -1142,7 +1177,7 @@
                 t = is_function(s);
                 return each(target, function(v, k, a) {
                     content_set(v, t ? s.call(v, k, a) : s);
-                });
+                }, 1);
             },
             text: function(s) {
                 if (!is_set(s)) {
@@ -1151,7 +1186,16 @@
                 t = is_function(s);
                 return each(target, function(v, k, a) {
                     v.textContent = t ? s.call(v, k, a) : s;
-                });
+                }, 1);
+            },
+            value: function(s) {
+                if (!is_set(s)) {
+                    t = target[0];
+                    v = t.value;
+                    if (!attr_get(t, 'value') && v === 'on') v = true;
+                    return !t.disabled && decode_value(v === 0 ? 0 : (v || ""));
+                }
+                return target.set('value', s);
             },
             copy: function(s) {
                 return do_instance(dom_copy(target[0], s));
@@ -1159,40 +1203,41 @@
             prepend: function(s) {
                 return each(target, function(v) {
                     dom_begin(v, el(s));
-                });
+                }, 1);
             },
             append: function(s) {
                 return each(target, function(v) {
                     dom_end(v, el(s));
-                });
+                }, 1);
             },
+            insert: $$.noop,
             before: function(s) {
                 return each(target, function(v) {
                     dom_before(v, el(s));
-                });
+                }, 1);
             },
             after: function(s) {
                 return each(target, function(v) {
                     dom_after(v, el(s));
-                });
+                }, 1);
             },
             remove: function() {
                 return each(target, function(v) {
                     dom_reset(v);
-                });
+                }, 1);
             },
             wrap: function(s) {
                 return each(target, function(v) {
                     t = query(s)[0];
                     dom_before(v, t);
                     dom_set(t, v);
-                });
+                }, 1);
             },
             unwrap: function(s) {
                 return each(target, function(v) {
                     t = is_set(s) ? do_instance(v).closest(s) : [dom_parent(v)];
                     dom_replace(t[0], v);
-                });
+                }, 1);
             },
             css: function(a, b) {
                 if (!is_set(a)) {
@@ -1200,7 +1245,7 @@
                 } else if (a === false) {
                     return each(target, function(v) {
                         attr_reset(v, 'style');
-                    });
+                    }, 1);
                 }
                 if (is_set(b)) {
                     o = {};
@@ -1208,21 +1253,12 @@
                 } else {
                     o = a;
                 }
-                if (is_string(o)) {
+                if (is_string(o) || is_array(o)) {
                     return css(target[0], o);
                 }
                 return each(target, function(v) {
                     css(v, o);
-                });
-            },
-            show: function() {
-                return target.css('display', null);
-            },
-            hide: function() {
-                return target.css('display', 'none');
-            },
-            toggle: function() {
-                return target[css(v, 'display') === 'none' ? 'show' : 'hide']();
+                }, 1);
             },
             offset: function(o) {
                 t = target[0];
@@ -1266,19 +1302,19 @@
                 }
                 return target.events.set(e, fn);
             };
-        });
+        }, 1);
 
         extend(target.attributes, {
             set: function(a, b) {
                 t = is_function(b);
                 return each(target, function(v, k, s) {
                     attr_set(v, a, t ? b.call(v, k, s) : b);
-                });
+                }, 1);
             },
             reset: function(a) {
                 return each(target, function(v) {
                     attr_reset(v, a);
-                });
+                }, 1);
             },
             get: function(a, b) {
                 return attr_get(target[0], a, b);
@@ -1290,12 +1326,12 @@
                 t = is_function(b);
                 return each(target, function(v, k, s) {
                     data_set(v, a, t ? b.call(v, k, s) : b);
-                });
+                }, 1);
             },
             reset: function(a) {
                 return each(target, function(v) {
                     data_reset(v, a);
-                });
+                }, 1);
             },
             get: function(a, b) {
                 return data_get(target[0], a, b);
@@ -1307,18 +1343,18 @@
                 t = is_function(a);
                 return each(target, function(v, k, s) {
                     class_set(v, t ? a.call(v, k, s) : a);
-                });
+                }, 1);
             },
             reset: function(a) {
                 return each(target, function(v) {
                     class_reset(v, a);
-                });
+                }, 1);
             },
             toggle: function(a) {
                 t = is_function(a);
                 return each(target, function(v, k, s) {
                     class_toggle(v, t ? a.call(v, k, s) : a);
-                });
+                }, 1);
             },
             get: function(a, b) {
                 return class_get(target[0], a, b);
@@ -1341,7 +1377,7 @@
                     }
                     a[b].push(d);
                     event_set(event, v, d);
-                });
+                }, 1);
             },
             reset: function(event, fn) {
                 var a = $$.id.f,
@@ -1351,21 +1387,21 @@
                     if (!fn) {
                         each(c, function(f) {
                             event_reset(event, v, f);
-                        });
+                        }, 1);
                     } else {
                         d = function(e) {
+                            e = $$.event(e);
                             x = is_function(fn) ? fn.call(v, e) : fn;
                             if (x === false) return event_exit(e);
                         }
                         event_reset(event, v, d);
                     }
-                }), delete (fn ? a[b][d] : a[b]), target;
+                }, 1), delete (fn ? a[b][d] : a[b]), target;
             },
             fire: function(event, data) {
-                return each(target, function() {
-                    v = this;
-                    event_fire.call(v, event, v, data);
-                });
+                return each(target, function(v) {
+                    event_fire(event, v, data);
+                }, 1);
             },
             x: event_exit,
             capture: function(event, get, fn) {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <ul>
+      <li>red</li>
+      <li>orange</li>
+      <li><mark>yellow</mark></li>
+      <li>green</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
+      <li>indigo</li>
+    </ul>
+    <ul>
+      <li>red</li>
+      <li>orange</li>
+      <li><mark>yellow</mark></li>
+      <li>green!</li>
+      <li>blue
+        <ol>
+          <li>light blue</li>
+          <li>dark blue</li>
+        </ol>
+      </li>
+      <li>indigo</li>
+    </ul>
+    <script>
+    $('mark').parent().traverse('nextElementSibling').css('color', 'red');
+    $('mark').parent().traverse(function() {
+        return this.nextElementSibling.innerHTML === 'green!' ? this.nextElementSibling : null;
+    }).css('font-weight', 'bold');
+    </script>
+  </body>
+</html>

@@ -6,7 +6,14 @@
     <script src="../d-o-m.min.js"></script>
   </head>
   <body>
-    <p>Open console!</p>
+    <ul>
+      <li>red</li>
+      <li>orange</li>
+      <li>yellow</li>
+      <li>green</li>
+      <li>blue</li>
+      <li>indigo</li>
+    </ul>
     <ul>
       <li>red</li>
       <li>orange</li>
@@ -16,10 +23,10 @@
       <li>indigo</li>
     </ul>
     <script>
-    console.log($('li'));
-    console.log($('li').item());
-    console.log($('li').item(2));
-    console.log($('li').item(10));
+    $('li').index(4).css('text-decoration', 'underline');
+    $('li').click(function() {
+        alert($(this).index());
+    });
     </script>
   </body>
 </html>

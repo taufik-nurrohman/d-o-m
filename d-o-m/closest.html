@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html dir="ltr" class="test-parent">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body class="test-parent">
+    <ul class="test-parent">
+      <li>red</li>
+      <li>orange</li>
+      <li><mark>yellow</mark></li>
+      <li>green</li>
+      <li>blue
+        <ul>
+          <li>light blue</li>
+          <li class="test">dark blue</li>
+        </ul>
+      </li>
+      <li>indigo</li>
+    </ul>
+    <ul class="test-parent">
+      <li>red</li>
+      <li>orange</li>
+      <li><mark>yellow</mark></li>
+      <li>green</li>
+      <li>blue
+        <ul>
+          <li>light blue</li>
+          <li class="test">dark blue</li>
+        </ul>
+      </li>
+      <li>indigo</li>
+    </ul>
+    <script>
+    $('.test').closest('ul').css('border', '1px solid');
+    $('.test').closest('.test-parent').css('border', '1px dashed');
+    </script>
+  </body>
+</html>

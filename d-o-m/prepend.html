@@ -6,7 +6,6 @@
     <script src="../d-o-m.min.js"></script>
   </head>
   <body>
-    <p>Open console!</p>
     <ul>
       <li>red</li>
       <li>orange</li>
@@ -15,11 +14,16 @@
       <li>blue</li>
       <li>indigo</li>
     </ul>
-    <script>
-    console.log($('li'));
-    console.log($('li').item());
-    console.log($('li').item(2));
-    console.log($('li').item(10));
-    </script>
+    <ul>
+      <li>red</li>
+      <li>orange</li>
+      <li>yellow</li>
+      <li>green</li>
+      <li>blue</li>
+      <li>indigo</li>
+    </ul>
+    <p>
+      <button onclick="$('ul').prepend('&lt;li&gt;&lt;mark&gt;prepend!&lt;/mark&gt;&lt;/li&gt;');">prepend!</button>
+    </p>
   </body>
 </html>
