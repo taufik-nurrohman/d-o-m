@@ -194,7 +194,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Execute all handlers and behaviors attached to the matched elements for the given event type.</p>
       <pre><code>$('button').events.fire("click");</code></pre>
       <h4 id="section:method-events-capture">.events.capture()</h4>
-      <p>Attach a handler to one or more events for all elements that match the selector, now or in the future, based on a specific set of root elements.</p>
+      <p>Attach a handler to one or more events for all elements that match the selector, now or in the future, based on a specific set of root elements.<sup><a href="d-o-m/events.capture.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('#container').events.capture("click", 'button', function() {
     $(this).append('&lt;button&gt;new button&lt;/button&gt;');
 });</code></pre>

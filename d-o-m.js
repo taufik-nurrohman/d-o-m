@@ -983,6 +983,10 @@
             return v[prop_nodename] && /^(button|input|select|textarea)$/.test(to_lower_case(v[prop_nodename])) || v[prop_contenteditable];
         }
 
+        function is_DOM(s) {
+            return is_array(s) && s.query && s.id;
+        }
+
         function do_fire_input(v) {
             if (is_input(v)) {
                 event_fire("change input", v, []);
@@ -1202,23 +1206,22 @@
             },
             prepend: function(s) {
                 return each(target, function(v) {
-                    dom_begin(v, el(s));
+                    dom_begin(v, is_DOM(s) ? to_array(s)[0] : el(s));
                 }, 1);
             },
             append: function(s) {
                 return each(target, function(v) {
-                    dom_end(v, el(s));
+                    dom_end(v, is_DOM(s) ? to_array(s)[0] : el(s));
                 }, 1);
             },
-            insert: $$.noop,
             before: function(s) {
                 return each(target, function(v) {
-                    dom_before(v, el(s));
+                    dom_before(v, is_DOM(s) ? to_array(s)[0] : el(s));
                 }, 1);
             },
             after: function(s) {
                 return each(target, function(v) {
-                    dom_after(v, el(s));
+                    dom_after(v, is_DOM(s) ? to_array(s)[0] : el(s));
                 }, 1);
             },
             remove: function() {
@@ -1406,9 +1409,10 @@
             x: event_exit,
             capture: function(event, get, fn) {
                 d = function(e) {
+                    s = e.target;
                     t = query(get, this);
-                    if (has(t, e.target) !== -1 || (u = do_instance(e.target)) && has(t, u.closest(get)[0]) !== -1) {
-                        return fn.call(t, e);
+                    if (has(t, s) !== -1 || (u = do_instance(s)) && has(t, u.closest(get)[0]) !== -1) {
+                        return fn.call(do_instance(s), e);
                     }
                 };
                 return target.events.set(event, d);
