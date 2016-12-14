@@ -91,7 +91,7 @@
             x = '\0';
             for (i in a) {
                 if (str_join(a[i], x) === str_join(s, x)) {
-                    return i;
+                    return str(i);
                 }
             }
             return -1;
@@ -1276,21 +1276,27 @@
                 }
                 return {
                     x: x,
-                    y: y
+                    y: y,
+                    l: x, // `left` alias for `x`
+                    t: y  // `top` alias for `y`
                 };
             },
             size: function(o) {
                 t = target[0];
                 if (!t) return {};
                 if (o) {
-                    return {
-                        x: t.offsetWidth,
-                        y: t.offsetHeight
-                    };
+                    x = t.offsetWidth;
+                    y = t.offsetHeight;
+                } else {
+                    o = css(t, ['width', 'height']);
+                    x = o[0];
+                    y = o[1];
                 }
-                return (o = css(t, ['width', 'height'])) && {
-                    x: o[0],
-                    y: o[1]
+                return {
+                    x: x,
+                    y: y,
+                    w: x, // `width` alias for `x`
+                    h: y  // `height` alias for `y`
                 };
             }
         });

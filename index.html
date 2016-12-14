@@ -365,15 +365,56 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
     'target': '_blank'
 });</code></pre>
       <h3 id="section:utility-extend">.extend()</h3>
+      <p>Extend two plain objects.</p>
+      <pre><code>var o = {
+    foo: 0,
+    bar: 1,
+    baz: {
+        qux: 2
+    }
+};
+
+o = $.extend(o, {
+    bar: '#',
+    baz: {
+        qux: '#'
+        wow: '#'
+    }
+}); // return `{foo:0,bar:'#',baz:{qux:'#',wow:'#'}}`</code></pre>
       <h3 id="section:utility-has">.has()</h3>
+      <p>Check whether an array/object contains <var>item</var>. This function will return the <var>item</var> key as an integer for array and as a string for object. Return <code>-1</code> on failure.</p>
+      <pre><code>console.log($.has([1, 2, 3, 4, 5], <var>item</var>));</code></pre>
+      <pre><code>console.log($.has({0: 1, 1: 2, 2: 3, 3: 4, 4: 5}, <var>item</var>));</code></pre>
       <h3 id="section:utility-hooks">.hooks()</h3>
+      <p>Custom events.</p>
       <h4 id="section:utility-hooks-set">.hooks.set()</h4>
+      <p>Set a new <code>on.create</code> hook.</p>
+      <pre><code>$.hooks.set("on.create", function() {
+    alert('test hook');
+});</code></pre>
+      <p>Set a new <code>on.create</code> hook with ID <code>main</code>.</p>
+      <pre><code>$.hooks.set("on.create", function() {
+    alert('test hook');
+}, 'main');</code></pre>
       <h4 id="section:utility-hooks-reset">.hooks.reset()</h4>
+      <p>Remove all <code>on.create</code> hooks.</p>
+      <pre><code>$.hooks.reset("on.create");</code></pre>
+      <p>Remove <code>on.create</code> hook with ID <code>main</code>.</p>
+      <pre><code>$.hooks.reset("on.create", 'main');</code></pre>
       <h4 id="section:utility-hooks-fire">.hooks.fire()</h4>
+      <p>Trigger all <code>on.create</code> hooks.</p>
+      <pre><code>$.hooks.fire("on.create", [ &hellip; ]); // `[ &hellip; ]` is for function parameter data</code></pre>
+      <p>Trigger <code>on.create</code> hook with ID <code>main</code>.</p>
+      <pre><code>$.hooks.fire("on.create", [ &hellip; ], 'main');</code></pre>
       <h3 id="section:utility-trim">.trim()</h3>
+      <p>Remove white&ndash;spaces at the beginning and end of a string.</p>
+      <pre><code>$.trim('    lorem ipsum dolor sit amet\r\n');</code></pre>
       <h4 id="section:utility-trim-before">.trim.before()</h4>
+      <p>Remove white&ndash;spaces at the beginning of a string.</p>
       <h4 id="section:utility-trim-after">.trim.after()</h4>
+      <p>Remove white&ndash;spaces at the end of a string.</p>
       <h3 id="section:utility-is">.is</h3>
+      <p>Data type checks.</p>
       <h4 id="section:utility-is-a">.is.a()</h4>
       <p>Is array.</p>
       <h4 id="section:utility-is-b">.is.b()</h4>
@@ -397,33 +438,68 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h4 id="section:utility-is-x">.is.x()</h4>
       <p>Is not set.</p>
       <h3 id="section:utility-to">.to</h3>
+      <p>Converters.</p>
       <h4 id="section:utility-to-a">.to.a()</h4>
+      <p>Convert object to array.</p>
       <h5 id="section:utility-to-a-u">.to.a.u()</h5>
+      <p>Remove duplicate array values.</p>
       <h4 id="section:utility-to-i">.to.i()</h4>
+      <p>Parse number in string.</p>
       <h4 id="section:utility-to-o">.to.o()</h4>
+      <p>Convert array to object.</p>
       <h4 id="section:utility-to-r">.to.r()</h4>
+      <p>Convert string to regular expression.</p>
       <h4 id="section:utility-to-s">.to.s()</h4>
+      <p>Convert any data type to string.</p>
       <h5 id="section:utility-to-s-c">.to.s.c()</h5>
+      <p>From <code>foo-bar-baz</code> to <code>fooBarBaz</code>.</p>
       <h5 id="section:utility-to-s-d">.to.s.d()</h5>
+      <p>From <code>fooBarBaz</code> to <code>foo-bar-baz</code>.</p>
       <h5 id="section:utility-to-s-p">.to.s.p()</h5>
+      <p>From <code>foo-bar-baz</code> to <code>FooBarBaz</code>.</p>
       <h3 id="section:utility-encode">.encode</h3>
+      <p>Encode data.</p>
       <h4 id="section:utility-encode-base64">.encode.base64()</h4>
+      <p>Convert string input to Base64 string.</p>
       <h4 id="section:utility-encode-url">.encode.url()</h4>
+      <p>Encode URL.</p>
       <h4 id="section:utility-encode-json">.encode.json()</h4>
+      <p>Convert object to JSON string.</p>
       <h4 id="section:utility-encode-s">.encode.s()</h4>
+      <p>Convert real data to a string. Example, convert <code>true</code> to <code>"true"</code>.</p>
       <h3 id="section:utility-decode">.decode</h3>
+      <p>Decode data.</p>
       <h4 id="section:utility-encode-base64">.decode.base64()</h4>
+      <p>Convert Base64 string to normal string.</p>
       <h4 id="section:utility-encode-url">.decode.url()</h4>
+      <p>Decode URL.</p>
       <h4 id="section:utility-encode-json">.decode.json()</h4>
+      <p>Convert JSON string to object.</p>
       <h4 id="section:utility-encode-s">.decode.s()</h4>
+      <p>Convert string to their appropriate type/format. Example, convert <code>"true"</code> to <code>true</code>.</p>
       <h3 id="section:utility-path">.path</h3>
+      <p>Return the base path of current script.</p>
       <h3 id="section:utility-ready">.ready()</h3>
+      <p>Bind an event handler to the <code>DOMContentLoaded</code> JavaScript event.</p>
+      <pre><code>$.ready(function() {
+    alert('DOM is ready!');
+});</code></pre>
       <h3 id="section:utility-load">.load()</h3>
+      <p>Bind an event handler to the <code>load</code> JavaScript event.</p>
+      <pre><code>$.load(function() {
+    alert('DOM is fully loaded!');
+});</code></pre>
       <h3 id="section:utility-noop">.noop</h3>
+      <p>Empty function.</p>
       <h3 id="section:utility-plug">.plug</h3>
+      <p>See <a href="#section:extend">#section:extend</a>.</p>
       <h3 id="section:utility-keys">.keys</h3>
       <h3 id="section:utility-keys_alias">.keys_alias</h3>
       <h3 id="section:utility-key">.event()</h3>
+      <p>Normalize current JavaScript events.</p>
+      <pre><code>$('button')[0].onclick = function(e) {
+    e = $.event(e); // will also add a `DOM` property as stable alternative to `key`
+};</code></pre>
     </section>
     <aside>
       <h3>Table of Content</h3>
@@ -507,8 +583,48 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
               <li><a href="#section:method-size"><code>.size()</code></a></li>
             </ul>
           </li>
-          <li><a href="#section:property">Properties</a></li>
-          <li><a href="#section:utility">Utilities</a></li>
+          <li><a href="#section:property">Properties</a>
+            <ul>
+              <li><a href="#section:property-query"><code>.query</code></a></li>
+              <li><a href="#section:property-id"><code>.id</code></a></li>
+            </ul>
+          </li>
+          <li><a href="#section:utility">Utilities</a>
+            <ul>
+              <li><a href="#section:utility-version"><code>.version</code></a></li>
+              <li><a href="#section:utility-DOM"><code>.DOM</code></a></li>
+              <li><a href="#section:utility-id"><code>.id</code></a></li>
+              <li><a href="#section:utility-edge"><code>.edge()</code></a></li>
+              <li><a href="#section:utility-el"><code>.el()</code></a></li>
+              <li><a href="#section:utility-extend"><code>.extend()</code></a></li>
+              <li><a href="#section:utility-has"><code>.has()</code></a></li>
+              <li><a href="#section:utility-hooks"><code>.hooks()</code></a>
+                <ul>
+                  <li><a href="#section:utility-hooks-set"><code>.set()</code></a></li>
+                  <li><a href="#section:utility-hooks-reset"><code>.reset()</code></a></li>
+                  <li><a href="#section:utility-hooks-fire"><code>.fire()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:utility-trim"><code>.trim()</code></a>
+                <ul>
+                  <li><a href="#section:utility-trim-before"><code>.before()</code></a></li>
+                  <li><a href="#section:utility-trim-after"><code>.after()</code></a></li>
+                </ul>
+              </li>
+              <li><a href="#section:utility-is"><code>.is</code></a></li>
+              <li><a href="#section:utility-to"><code>.to</code></a></li>
+              <li><a href="#section:utility-encode"><code>.encode</code></a></li>
+              <li><a href="#section:utility-decode"><code>.decode</code></a></li>
+              <li><a href="#section:utility-path"><code>.path</code></a></li>
+              <li><a href="#section:utility-ready"><code>.ready()</code></a></li>
+              <li><a href="#section:utility-load"><code>.load()</code></a></li>
+              <li><a href="#section:utility-noop"><code>.noop</code></a></li>
+              <li><a href="#section:utility-plug"><code>.plug</code></a></li>
+              <li><a href="#section:utility-keys"><code>.keys</code></a></li>
+              <li><a href="#section:utility-keys_alias"><code>.keys_alias</code></a></li>
+              <li><a href="#section:utility-event"><code>.event()</code></a></li>
+            </ul>
+          </li>
         </ul>
       </nav>
     </aside>
