@@ -993,10 +993,11 @@
             }
         }
 
+        target[DOM_NS_0] = target[DOM_NS_1] = function(a, b) {
+            return do_instance(target.concat(query(a, b)));
+        };
+
         extend(target, {
-            $: function(a, b) {
-                return do_instance(target.concat(query(a, b)));
-            },
             item: function(i, f) {
                 o = to_array(target);
                 return is_set(i) ? (o[i] || (is_set(f) ? f : false)) : (count(o) ? o : (is_set(f) ? f : []));
@@ -1300,9 +1301,6 @@
                 };
             }
         });
-
-        // alias of `$`
-        target[DOM_NS_1] = target.$;
 
         each(["click", "change", "focus", "blur", "select", "submit"], function(e) {
             target[e] = function(fn) {
