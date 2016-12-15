@@ -265,6 +265,15 @@
         em = em || 'div';
         em = is_string(em) ? ((em = trim(em)), em[0] === '<' && em.slice(-1) === '>' && count(em) >= 3 ? (f = doc[create]('div'), f.innerHTML = em, f[first_child]) : doc[create](em)) : em;
         if (is_plain_object(attr)) {
+            if (!node) {
+                if (is_set(attr.html)) {
+                    node = attr.html;
+                    delete attr.html;
+                } else if (is_set(attr.text)) {
+                    node = attr.text;
+                    delete attr.text;
+                }
+            }
             for (i in attr) {
                 v = attr[i];
                 if (i === 'classes') {
@@ -277,7 +286,7 @@
                         } else {
                             data_set(em, j, v);
                         }
-                    }
+                    }$.el('div',false,{'class':'foo',html:$.el('a','foo',{foo:'bar'})});
                 } else if (i === 'css') {
                     if (is_string(v)) {
                         attr_set(em, 'style', v);
@@ -366,7 +375,7 @@
                 attr_set(node, i, a[i]);
             }
         } else {
-            node[(b === null ? 'remove' : 'set') + 'Attribute'](prop(a), encode_value(b));
+            node[(b === null ? 'remove' : 'set') + 'Attribute'](a, encode_value(b));
         }
     }
 
@@ -384,7 +393,7 @@
         }
         o = [];
         for (i in a) {
-            i = prop(a[i]);
+            i = a[i];
             i = node.getAttribute(i) || "";
             o.push(decode_value(i));
         }
@@ -403,7 +412,7 @@
                     if (j[i]) attr_reset(node, j[i].name);
                 }
             } else {
-                node.removeAttribute(prop(a));
+                node.removeAttribute(a);
             }
         }
     }
@@ -638,7 +647,7 @@
 
     (function($, $$) {
 
-        $.version = '1.0.0';
+        $.version = '1.0.1';
         $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // element(s)
@@ -747,14 +756,14 @@
             base64: btoa,
             url: encodeURIComponent,
             json: JSON.stringify,
-            s: encode_value
+            data: encode_value
         };
 
         $.decode = {
             base64: atob,
             url: decodeURIComponent,
             json: JSON.parse,
-            s: decode_value
+            data: decode_value
         };
 
         // current script path
@@ -845,26 +854,47 @@
 
         // key alias(es)
         keys_alias = {
-            'alternate': 'alt',
-            'option': 'alt',
-            'ctrl': 'control',
-            'cmd': 'control',
-            'command': 'control',
-            'os': 'meta', // <https://bugzilla.mozilla.org/show_bug.cgi?id=1232918>
-            'context': 'contextmenu',
-            'menu': 'contextmenu',
-            'return': 'enter',
-            'ins': 'insert',
-            'del': 'delete',
-            'esc': 'escape',
-            'left': 'arrowleft',
-            'right': 'arrowright',
-            'up': 'arrowup',
-            'down': 'arrowdown',
-            'back': 'backspace',
-            'space': ' ',
-            'plus': '+',
-            'minus': '-'
+            'alternate': keys[18],
+            'option': keys[18],
+            'ctrl': keys[17],
+            'cmd': keys[17],
+            'command': keys[17],
+            'os': keys[224], // <https://bugzilla.mozilla.org/show_bug.cgi?id=1232918>
+            'context': keys[93],
+            'menu': keys[93],
+            'context-menu': keys[93],
+            'return': keys[13],
+            'ins': keys[45],
+            'del': keys[46],
+            'esc': keys[27],
+            'left': keys[37],
+            'right': keys[39],
+            'up': keys[38],
+            'down': keys[40],
+            'arrow-left': keys[37],
+            'arrow-right': keys[39],
+            'arrow-up': keys[38],
+            'arrow-down': keys[40],
+            'back': keys[8],
+            'back-space': keys[8],
+            'space': keys[32],
+            'plus': keys[61][1],
+            'minus': keys[173][0],
+            'caps-lock': keys[20],
+            'non-convert': keys[29],
+            'mode-change': keys[31],
+            'page-up': keys[33],
+            'page-down': keys[34],
+            'print-screen': keys[44],
+            'num-lock': keys[144],
+            'numeric-lock': keys[144],
+            'scroll-lock': keys[145],
+            'volume-mute': keys[181],
+            'volume-down': keys[182],
+            'volume-up': keys[183],
+            'altgr': keys[225],
+            'alt-gr': keys[225],
+            'alt-graph': keys[225]
         }, i, j;
 
         // function
@@ -901,7 +931,18 @@
                     }
                     return k;
                 }
-                if (is_pattern(x)) return y && x.test(k);
+                if (is_pattern(x)) {
+                    return y && x.test(k);
+                }
+                if (is_object(x)) {
+                    if (y) {
+                        for (i = 0, j = count(x); i < j; ++i) {
+                            l = to_lower_case(x[i]);
+                            if ((keys_alias[l] || l) === k) return true;
+                        }
+                    }
+                    return false;
+                }
                 return x = to_lower_case(x), y && (keys_alias[x] || x) === k;
             }
             return e[DOM_NS_1] = {
@@ -932,6 +973,10 @@
         var $ = this,
             $$ = win[DOM_NS_1];
 
+        function maybe_from_instance(s) {
+            return is_array(s) && s.query && s.id ? s[0] : el(s);
+        }
+
         function query(target, scope) {
             if (target instanceof DOM) return target;
             var head = doc.head,
@@ -939,6 +984,10 @@
                 target_o = target,
                 scope_o = scope;
             scope = scope || doc;
+            if (is_string(scope)) {
+                scope = query(scope)[0];
+            }
+            scope = maybe_from_instance(scope);
             if (is_string(target) && count(target)) {
                 target = trim(target);
                 if (target === 'html') {
@@ -948,7 +997,7 @@
                 } else if (target === 'body') {
                     target = [body];
                 } else if (target[0] === '<' && target.slice(-1) === '>') {
-                    target = [el(target, (is_plain_object(scope_o) && (scope_o.html || scope_o.text || false)), scope_o)];
+                    target = [el(target, false, scope_o)];
                 } else if (/^[#.]?(?:\\.|[\w-]|[^\x00-\xa0])+$/.test(target)) {
                     if (target[0] === '#' && (e = scope[gebi](target.slice(1)))) {
                         target = [e];
@@ -979,18 +1028,9 @@
             $$.id.e[i] = target.query;
         }
 
-        function is_input(v) {
-            return v[prop_nodename] && /^(button|input|select|textarea)$/.test(to_lower_case(v[prop_nodename])) || v[prop_contenteditable];
-        }
-
-        function is_DOM(s) {
-            return is_array(s) && s.query && s.id;
-        }
-
         function do_fire_input(v) {
-            if (is_input(v)) {
-                event_fire("change input", v, []);
-            }
+            ('onchange' in v) && event_fire("change", v);
+            ('oninput' in v) && event_fire("input", v);
         }
 
         target[DOM_NS_0] = target[DOM_NS_1] = function(a, b) {
@@ -1207,22 +1247,22 @@
             },
             prepend: function(s) {
                 return each(target, function(v) {
-                    dom_begin(v, is_DOM(s) ? to_array(s)[0] : el(s));
+                    dom_begin(v, maybe_from_instance(s));
                 }, 1);
             },
             append: function(s) {
                 return each(target, function(v) {
-                    dom_end(v, is_DOM(s) ? to_array(s)[0] : el(s));
+                    dom_end(v, maybe_from_instance(s));
                 }, 1);
             },
             before: function(s) {
                 return each(target, function(v) {
-                    dom_before(v, is_DOM(s) ? to_array(s)[0] : el(s));
+                    dom_before(v, maybe_from_instance(s));
                 }, 1);
             },
             after: function(s) {
                 return each(target, function(v) {
-                    dom_after(v, is_DOM(s) ? to_array(s)[0] : el(s));
+                    dom_after(v, maybe_from_instance(s));
                 }, 1);
             },
             remove: function() {
@@ -1391,19 +1431,19 @@
                     b = target.id,
                     c = a[b], d;
                 return each(target, function(v) {
-                    if (!fn) {
+                    // if (!fn) {
                         each(c, function(f) {
                             event_reset(event, v, f);
                         }, 1);
-                    } else {
-                        d = function(e) {
-                            e = $$.event(e);
-                            x = is_function(fn) ? fn.call(v, e) : fn;
-                            if (x === false) return event_exit(e);
-                        }
-                        event_reset(event, v, d);
-                    }
-                }, 1), delete (fn ? a[b][d] : a[b]), target;
+                    // } else {
+                    //     d = function(e) {
+                    //         e = $$.event(e);
+                    //         x = is_function(fn) ? fn.call(v, e) : fn;
+                    //         if (x === false) return event_exit(e);
+                    //     }
+                    //     event_reset(event, v, d);
+                    // }
+                }, 1), delete (fn && (i = has(c, d)) !== -1 ? a[b][i] : a[b]), target;
             },
             fire: function(event, data) {
                 return each(target, function(v) {

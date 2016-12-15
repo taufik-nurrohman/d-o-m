@@ -6,7 +6,7 @@
     <title>DOM Library</title>
     <link href="favicon.ico" rel="shortcut icon">
     <script src="d-o-m.min.js"></script>
-    <style>*{margin:0;padding:0;font:inherit}b,h1,h2,h3,h4,h5,h6,strong{font-weight:700}em,i,var{font-style:italic}sup{font-size:80%}body,html{background:#fff;color:#000}html{font:normal normal 18px/1.5 "Times New Roman",Times,Serif}body{padding:5%;margin-right:15em}footer,section{margin:5% 0 0}a{color:#00f;text-decoration:none}a:hover{text-decoration:underline}a:active,a:focus{color:red}h1{font-size:250%}h2{font-size:170%}aside h3,h3,h5{font-size:110%}h4{font-size:100%}h6{font-size:80%}blockquote,h1,h2,h3,h4,h5,h6,ol,p,pre,ul{margin:1rem 0 0}h1,ol ol,ol ul,ul ol,ul ul{margin-top:0}ol,ul{margin-left:2em;padding-left:0}ul li{list-style:square}code{font-family:"Courier New",Courier,"Nimbus Mono L",Monospace;font-size:86%}blockquote{padding-left:1em;border-left:4px solid}pre{background:#000;color:#fff;padding:1em;white-space:pre-wrap;word-wrap:break-word;font-style:normal;font-size:90%;line-height:1em}aside{position:absolute;top:5%;right:5%;width:12em}@media (max-width:800px){html{font-size:15px}body{margin-right:0}aside{position:static;margin-top:5%}}</style>
+    <style>*{margin:0;padding:0;font:inherit}abbr{border:0;text-decoration:none;cursor:help}b,h1,h2,h3,h4,h5,h6,strong{font-weight:700}em,i,var{font-style:italic}sup{font-size:80%}body,html{background:#fff;color:#000}html{font:normal normal 18px/1.5 "Times New Roman",Times,Serif}body{padding:5%;margin-right:15em}footer,section{margin:5% 0 0}a{color:#00f;text-decoration:none}a:hover{text-decoration:underline}a:active,a:focus{color:red}h1{font-size:250%}h2{font-size:170%}aside h3,h3,h5{font-size:110%}h4{font-size:100%}h6{font-size:80%}blockquote,h1,h2,h3,h4,h5,h6,ol,p,pre,ul{margin:1rem 0 0}h1,ol ol,ol ul,ul ol,ul ul{margin-top:0}ol,ul{margin-left:2em;padding-left:0}ul li{list-style:square}code{font-family:"Courier New",Courier,"Nimbus Mono L",Monospace;font-size:86%}blockquote{padding-left:1em;border-left:4px solid}pre{background:#000;color:#fff;padding:1em;white-space:pre-wrap;word-wrap:break-word;font-style:normal;font-size:90%;line-height:1em}aside{position:absolute;top:5%;right:5%;width:12em}@media (max-width:800px){html{font-size:15px}body{margin-right:0}aside{position:static;margin-top:5%}}</style>
   </head>
   <body>
     <header>
@@ -34,7 +34,7 @@
       <h2 id="section:configure">Configure</h2>
       <p>Configuration is not available.</p>
       <h2 id="section:extend">Extend</h2>
-      <p>Create a new extension:</p>
+      <p>Create a new method:</p>
       <pre><code>$.plug.red = function() {
     // `this` refers to the DOM object
     return this.css('color', 'red');
@@ -87,7 +87,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
     return this.id === '#foo';
 }); // &hellip; is the same as `$('h2:not(#foo)')`</code></pre>
       <h3 id="section:method-has">.has()</h3>
-      <p>Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.<sup><a href="d-o-m/has.html" target="_blank">&#8599;</a></sup></p>
+      <p>Reduce the set of matched elements to those that have a descendant that matches the selector or <abbr title="Hyper Text Markup Language">HTML</abbr> element.<sup><a href="d-o-m/has.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('li').has('ul').classes.set('parent-menu');</code></pre>
       <h3 id="section:method-range">.range()</h3>
       <p>Reduce the set of matched elements to a subset specified by a range of indices.<sup><a href="d-o-m/range.html" target="_blank">&#8599;</a></sup></p>
@@ -100,8 +100,8 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
     'disable': true
 });</code></pre>
       <blockquote>
-        <p>Property <code>check</code> is just an alias for property <code>checked</code>. Some attributes need to have their own aliases because of the inconsistencies between JavaScript and HTML/CSS syntax.</p>
-        <p><strong>Example:</strong> A comparison between <code>spellcheck</code> in HTML/CSS with <code>spellcheck</code> in JavaScript and <code>readonly</code> in HTML/CSS with <code>readOnly</code> in JavaScript.</p>
+        <p>Property <code>check</code> is just an alias for property <code>checked</code>. Some attributes need to have their own aliases because of the inconsistencies between JavaScript and <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> syntax.</p>
+        <p><strong>Example:</strong> A comparison between <code>spellcheck</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>spellcheck</code> in JavaScript and <code>readonly</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>readOnly</code> in JavaScript.</p>
       </blockquote>
       <h3 id="section:method-reset">.reset()</h3>
       <p>Remove one or more properties for the set of matched elements.<sup><a href="d-o-m/reset.html" target="_blank">&#8599;</a></sup></p>
@@ -112,7 +112,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('input[type="checkbox"]').get('check');</code></pre>
       <pre><code>$('input[type="checkbox"]').get(['check', 'disable']);</code></pre>
       <h3 id="section:method-attributes">.attributes()</h3>
-      <p>Get all of the available HTML attributes for the first element in the set of matched elements.<sup><a href="d-o-m/attributes.html" target="_blank">&#8599;</a></sup></p>
+      <p>Get all of the available <abbr title="Hyper Text Markup Language">HTML</abbr> attributes for the first element in the set of matched elements.<sup><a href="d-o-m/attributes.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>console.log($('input').attributes());</code></pre>
       <h4 id="section:method-attributes-set">.attributes.set()</h4>
       <p>Set one or more attributes for every matched element.</p>
@@ -131,7 +131,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('input[type="checkbox"]').attributes.get('checked');</code></pre>
       <pre><code>$('input[type="checkbox"]').attributes.get(['checked', 'disabled']);</code></pre>
       <h3 id="section:method-classes">.classes()</h3>
-      <p>Get all of the available HTML class names for the first element in the set of matches elements as array.<sup><a href="d-o-m/classes.html" target="_blank">&#8599;</a></sup></p>
+      <p>Get all of the available <abbr title="Hyper Text Markup Language">HTML</abbr> class names for the first element in the set of matches elements as array.<sup><a href="d-o-m/classes.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>console.log($('div').classes());</code></pre>
       <h4 id="section:method-classes-set">.classes.set()</h4>
       <p>Adds the specified class or classes to each element in the set of matched elements.</p>
@@ -167,7 +167,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('div').data.get('foo');</code></pre>
       <pre><code>$('div').data.get(['foo', 'bar']);</code></pre>
       <h3 id="section:method-events">.events()</h3>
-      <p>HTML events.<sup><a href="d-o-m/events.html" target="_blank">&#8599;</a></sup></p>
+      <p><abbr title="Hyper Text Markup Language">HTML</abbr> events.<sup><a href="d-o-m/events.html" target="_blank">&#8599;</a></sup></p>
       <h4 id="section:method-events-set">.events.set()</h4>
       <p>Attach an event handler function for one or more events to the selected elements.</p>
       <pre><code>$('input').events.set("keydown", function(e) {
@@ -223,7 +223,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>$('form').submit(function() { &hellip; });</code></pre>
       <pre><code>$('form').submit();</code></pre>
       <h3 id="section:method-traverse">.traverse()</h3>
-      <p>Traverse the set of matched elements with its native JavaScript DOM traverse properties, or with a function.<sup><a href="d-o-m/traverse.html" target="_blank">&#8599;</a></sup></p>
+      <p>Traverse the set of matched elements with its native JavaScript <abbr title="Document Object Model">DOM</abbr> traverse properties, or with function that return a <abbr title="Document Object Model">DOM</abbr> element.<sup><a href="d-o-m/traverse.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('li').traverse('nextElementSibling').css('color', 'red');</code></pre>
       <pre><code>$('ul').traverse(function() {
     return this.children[0]; // `this` refers to the current element
@@ -248,7 +248,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Get the siblings of each element in the set of matched elements, optionally filtered by a selector.<sup><a href="d-o-m/kin.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('li').kin().css('color', 'red');</code></pre>
       <h3 id="section:method-closest">.closest()</h3>
-      <p>For each element in the set, get the first element that matches the selector by testing the element itself and traversing up through its ancestors in the DOM tree.<sup><a href="d-o-m/closest.html" target="_blank">&#8599;</a></sup></p>
+      <p>For each element in the set, get the first element that matches the selector by testing the element itself and traversing up through its ancestors in the <abbr title="Document Object Model">DOM</abbr> tree.<sup><a href="d-o-m/closest.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('li').closest('li').css('color', 'red');</code></pre>
       <h3 id="section:method-find">.find()</h3>
       <p>Get the descendants of each element in the current set of matched elements, filtered by a selector.<sup><a href="d-o-m/find.html" target="_blank">&#8599;</a></sup></p>
@@ -260,7 +260,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Get the immediately preceding sibling of each element in the set of matched elements. If a selector is provided, it retrieves the previous sibling only if it matches that selector.<sup><a href="d-o-m/previous.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('li:last-child').previous().css('color', 'red');</code></pre>
       <h3 id="section:method-html">.html()</h3>
-      <p>Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.<sup><a href="d-o-m/html.html" target="_blank">&#8599;</a></sup></p>
+      <p>Get the <abbr title="Hyper Text Markup Language">HTML</abbr> contents of the first element in the set of matched elements or set the <abbr title="Hyper Text Markup Language">HTML</abbr> contents of every matched element.<sup><a href="d-o-m/html.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('#foo').html(); // get HTML content of `#foo`</code></pre>
       <pre><code>$('#foo').html('&lt;b&gt;bar&lt;/b&gt;'); // set HTML content of `#foo` as `&lt;b&gt;bar&lt;/b&gt;`</code></pre>
       <h3 id="section:method-text">.text()</h3>
@@ -272,32 +272,32 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>console.log($('input').value());</code></pre>
       <pre><code>$('input').value('foo bar baz');</code></pre>
       <h3 id="section:method-copy">.copy()</h3>
-      <p>Create a deep copy of the set of matched elements. Set the first parameter to <code>false</code> to copy only the outer HTML element.<sup><a href="d-o-m/copy.html" target="_blank">&#8599;</a></sup></p>
+      <p>Create a deep copy of the set of matched elements. Set the first parameter to <code>false</code> to copy only the outer <abbr title="Hyper Text Markup Language">HTML</abbr> element.<sup><a href="d-o-m/copy.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>var $copy = $('ul').copy(); // return `&lt;ul&gt;&lt;li&gt;foo bar&lt;/li&gt;&lt;/ul&gt;`</code></pre>
       <pre><code>var $copy = $('ul').copy(false); // return `&lt;ul&gt;&lt;/ul&gt;`</code></pre>
       <h3 id="section:method-prepend">.prepend()</h3>
-      <p>Insert content, specified by the parameter, to the beginning of each element in the set of matched elements.<sup><a href="d-o-m/prepend.html" target="_blank">&#8599;</a></sup></p>
+      <p>Insert <abbr title="Hyper Text Markup Language">HTML</abbr>, specified by the parameter, to the beginning of each element in the set of matched elements.<sup><a href="d-o-m/prepend.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').prepend('&lt;li&gt;list item&lt;/li&gt;');</code></pre>
       <h3 id="section:method-append">.append()</h3>
-      <p>Insert content, specified by the parameter, to the end of each element in the set of matched elements.<sup><a href="d-o-m/append.html" target="_blank">&#8599;</a></sup></p>
+      <p>Insert <abbr title="Hyper Text Markup Language">HTML</abbr>, specified by the parameter, to the end of each element in the set of matched elements.<sup><a href="d-o-m/append.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').append('&lt;li&gt;list item&lt;/li&gt;');</code></pre>
       <h3 id="section:method-before">.before()</h3>
-      <p>Insert content, specified by the parameter, before each element in the set of matched elements.<sup><a href="d-o-m/before.html" target="_blank">&#8599;</a></sup></p>
+      <p>Insert <abbr title="Hyper Text Markup Language">HTML</abbr>, specified by the parameter, before each element in the set of matched elements.<sup><a href="d-o-m/before.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').before('&lt;p&gt;paragraph&lt;/p&gt;');</code></pre>
       <h3 id="section:method-after">.after()</h3>
-      <p>Insert content, specified by the parameter, after each element in the set of matched elements.<sup><a href="d-o-m/after.html" target="_blank">&#8599;</a></sup></p>
+      <p>Insert <abbr title="Hyper Text Markup Language">HTML</abbr>, specified by the parameter, after each element in the set of matched elements.<sup><a href="d-o-m/after.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').after('&lt;p&gt;paragraph&lt;/p&gt;');</code></pre>
       <h3 id="section:method-remove">.remove()</h3>
-      <p>Remove the set of matched elements from the DOM.<sup><a href="d-o-m/remove.html" target="_blank">&#8599;</a></sup></p>
+      <p>Remove the set of matched elements from the <abbr title="Document Object Model">DOM</abbr>.<sup><a href="d-o-m/remove.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').remove();</code></pre>
       <h3 id="section:method-wrap">.wrap()</h3>
-      <p>Wrap an HTML structure around each element in the set of matched elements.<sup><a href="d-o-m/wrap.html" target="_blank">&#8599;</a></sup></p>
+      <p>Wrap an <abbr title="Hyper Text Markup Language">HTML</abbr> structure around each element in the set of matched elements.<sup><a href="d-o-m/wrap.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').wrap('&lt;div style="border:1px solid red;"&gt;&lt;/div&gt;');</code></pre>
       <h3 id="section:method-unwrap">.unwrap()</h3>
-      <p>Remove the parents of the set of matched elements from the DOM, leaving the matched elements in their place.<sup><a href="d-o-m/unwrap.html" target="_blank">&#8599;</a></sup></p>
+      <p>Remove the parents of the set of matched elements from the <abbr title="Document Object Model">DOM</abbr>, leaving the matched elements in their place.<sup><a href="d-o-m/unwrap.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').unwrap();</code></pre>
       <h3 id="section:method-css">.css()</h3>
-      <p>Get the value of a computed style property for the first element in the set of matched elements or set one or more CSS properties for every matched element.<sup><a href="d-o-m/css.html" target="_blank">&#8599;</a></sup></p>
+      <p>Get the value of a computed style property for the first element in the set of matched elements or set one or more <abbr title="Cascading Style Sheet">CSS</abbr> properties for every matched element.<sup><a href="d-o-m/css.html" target="_blank">&#8599;</a></sup></p>
       <pre><code>$('ul').css('color', 'red');</code></pre>
       <pre><code>$('ul').css({
     'color': 'red',
@@ -308,9 +308,9 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <pre><code>console.log($('ul').css('color'));</code></pre>
       <pre><code>console.log($('ul').css(['color', 'background-color']));</code></pre>
       <blockquote>
-        <p>All CSS value that can be parsed by JavaScript <code>parseFloat</code> will be returned as number:</p>
+        <p>All <abbr title="Cascading Style Sheet">CSS</abbr> value that can be parsed by JavaScript <code>parseFloat</code> will be returned as number:</p>
         <pre><code>$('ul').css('border-top-width'); // return `1`</code></pre>
-        <p>To disable that behaviour, prepend a <code>\0</code> to the CSS property:</p>
+        <p>To disable that behaviour, prepend a <code>\0</code> to the <abbr title="Cascading Style Sheet">CSS</abbr> property:</p>
         <pre><code>$('ul').css('\0border-top-width'); // return `1px`</code></pre>
       </blockquote>
       <h3 id="section:method-offset">.offset()</h3>
@@ -331,6 +331,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h2 id="section:utility">Utilities</h2>
       <h3 id="section:utility-version">.version</h3>
       <p>Return the current <em>DOM</em> version.</p>
+      <pre><code>console.log($.version); // return <script>document.write('`' + $.version + '`');</script></code></pre>
       <h3 id="section:utility-DOM">.DOM</h3>
       <p>Return <code>true</code>. This is only for variable testing.</p>
       <pre><code>if (typeof $ === "function" &amp;&amp; $.DOM) { &hellip; }</code></pre>
@@ -338,9 +339,13 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <p>Internal instances ID and the attached functions.</p>
       <h3 id="section:utility-edge">.edge()</h3>
       <p>Prevent <var>input</var> exceeds the value of <var>min</var> and <var>max</var>.</p>
-      <pre><code>$.edge(<var>input</var>, 0, 4);</code></pre>
+      <pre><code>$.edge(<var>input</var>, <var>min</var>, <var>max</var>);</code></pre>
+      <pre><code>$.edge(20, 0, 6); // return `6`
+$.edge(-1, 0, 6); // return `0`
+$.edge(2, 0, 6); // return `2`
+</code></pre>
       <h3 id="section:utility-el">.el()</h3>
-      <p>Create a new HTML element.</p>
+      <p>Create a new <abbr title="Hyper Text Markup Language">HTML</abbr> element.</p>
       <pre><code>$.el(); // return `&lt;div&gt;&lt;/div&gt;`</code></pre>
       <pre><code>$.el('a'); // return `&lt;a&gt;&lt;/a&gt;`</code></pre>
       <pre><code>$.el('a', 'link text'); // return `&lt;a&gt;link text&lt;/a&gt;`</code></pre>
@@ -348,11 +353,11 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
     'href': '/',
     'target': '_blank'
 }); // return `&lt;a href="/" target="_blank"&gt;link text&lt;/a&gt;`</code></pre>
-      <pre><code>$.el('a', el('b', 'link text'), {
+      <pre><code>$.el('a', $.el('b', 'link text'), {
     'href': '/',
     'target': '_blank'
 }); // return `&lt;a href="/" target="_blank"&gt;&lt;b&gt;link text&lt;/b&gt;&lt;/a&gt;`</code></pre>
-      <pre><code>$.el('a', [el('b', 'link'), el('i', 'text')], {
+      <pre><code>$.el('a', [$.el('b', 'link'), $.el('i', 'text')], {
     'href': '/',
     'target': '_blank'
 }); // return `&lt;a href="/" target="_blank"&gt;&lt;b&gt;link&lt;/b&gt;&lt;i&gt;text&lt;/i&gt;&lt;/a&gt;`</code></pre>
@@ -415,67 +420,57 @@ o = $.extend(o, {
       <p>Remove white&ndash;spaces at the end of a string.</p>
       <h3 id="section:utility-is">.is</h3>
       <p>Data type checks.</p>
-      <h4 id="section:utility-is-a">.is.a()</h4>
-      <p>Is array.</p>
-      <h4 id="section:utility-is-b">.is.b()</h4>
-      <p>Is boolean.</p>
-      <h4 id="section:utility-is-e">.is.e()</h4>
-      <p>Is HTML element.</p>
-      <h4 id="section:utility-is-f">.is.f()</h4>
-      <p>Is function.</p>
-      <h4 id="section:utility-is-i">.is.i()</h4>
-      <p>Is number.</p>
-      <h4 id="section:utility-is-n">.is.n()</h4>
-      <p>Is null.</p>
-      <h4 id="section:utility-is-o">.is.o()</h4>
-      <p>Is array or any object.</p>
-      <h5 id="section:utility-is-o-o">.is.o.o()</h5>
-      <p>Is plain object.</p>
-      <h4 id="section:utility-is-r">.is.r()</h4>
-      <p>Is regular expression.</p>
-      <h4 id="section:utility-is-s">.is.s()</h4>
-      <p>Is string.</p>
-      <h4 id="section:utility-is-x">.is.x()</h4>
-      <p>Is not set.</p>
+      <ul>
+        <li><code>.is.a()</code> &rarr; is array?</li>
+        <li><code>.is.b()</code> &rarr; is boolean?</li>
+        <li><code>.is.e()</code> &rarr; is <abbr title="Hyper Text Markup Language">HTML</abbr> element?</li>
+        <li><code>.is.f()</code> &rarr; is function?</li>
+        <li><code>.is.i()</code> &rarr; is number?</li>
+        <li><code>.is.n()</code> &rarr; is null?</li>
+        <li><code>.is.o()</code> &rarr; is array or object?
+          <ul>
+            <li><code>.is.o.o()</code> &rarr; is plain object?</li>
+          </ul>
+        </li>
+        <li><code>.is.r()</code> &rarr; is regular expression?</li>
+        <li><code>.is.s()</code> &rarr; is string?</li>
+        <li><code>.is.x()</code> &rarr; is not set?</li>
+      </ul>
       <h3 id="section:utility-to">.to</h3>
       <p>Converters.</p>
-      <h4 id="section:utility-to-a">.to.a()</h4>
-      <p>Convert object to array.</p>
-      <h5 id="section:utility-to-a-u">.to.a.u()</h5>
-      <p>Remove duplicate array values.</p>
-      <h4 id="section:utility-to-i">.to.i()</h4>
-      <p>Parse number in string.</p>
-      <h4 id="section:utility-to-o">.to.o()</h4>
-      <p>Convert array to object.</p>
-      <h4 id="section:utility-to-r">.to.r()</h4>
-      <p>Convert string to regular expression.</p>
-      <h4 id="section:utility-to-s">.to.s()</h4>
-      <p>Convert any data type to string.</p>
-      <h5 id="section:utility-to-s-c">.to.s.c()</h5>
-      <p>From <code>foo-bar-baz</code> to <code>fooBarBaz</code>.</p>
-      <h5 id="section:utility-to-s-d">.to.s.d()</h5>
-      <p>From <code>fooBarBaz</code> to <code>foo-bar-baz</code>.</p>
-      <h5 id="section:utility-to-s-p">.to.s.p()</h5>
-      <p>From <code>foo-bar-baz</code> to <code>FooBarBaz</code>.</p>
+      <ul>
+        <li><code>.to.a()</code> &rarr; convert object to array
+          <ul>
+            <li><code>.to.a.u()</code> &rarr; remove duplicate array values</li>
+          </ul>
+        </li>
+        <li><code>.to.i()</code> &rarr; parse numbers in string</li>
+        <li><code>.to.o()</code> &rarr; convert array to object</li>
+        <li><code>.to.r()</code> &rarr; parse string to regular expression</li>
+        <li><code>.to.s()</code> &rarr; convert any data type to string
+          <ul>
+            <li><code>.to.s.c()</code> &rarr; from <code>foo-bar-baz</code> to <code>fooBarBaz</code></li>
+            <li><code>.to.s.d()</code> &rarr; from <code>fooBarBaz</code> to <code>foo-bar-baz</code></li>
+            <li><code>.to.s.p()</code> &rarr; from <code>foo-bar-baz</code> to <code>FooBarBaz</code></li>
+          </ul>
+        </li>
+      </ul>
       <h3 id="section:utility-encode">.encode</h3>
       <p>Encode data.</p>
-      <h4 id="section:utility-encode-base64">.encode.base64()</h4>
-      <p>Convert string input to Base64 string.</p>
-      <h4 id="section:utility-encode-url">.encode.url()</h4>
-      <p>Encode URL.</p>
-      <h4 id="section:utility-encode-json">.encode.json()</h4>
-      <p>Convert object to JSON string.</p>
-      <h4 id="section:utility-encode-s">.encode.s()</h4>
-      <p>Convert real data to a string. Example, convert <code>true</code> to <code>"true"</code>.</p>
+      <ul>
+        <li><code>.encode.base64()</code> &rarr; convert string input to <strong>Base64</strong> string</li>
+        <li><code>.encode.url()</code> &rarr; encode <abbr title="Unoform Resource Locator">URL</abbr> special characters</li>
+        <li><code>.encode.json()</code> &rarr; convert object to JSON string</li>
+        <li><code>.encode.data()</code> &rarr; convert real data to a string; example, convert <code>true</code> to <code>"true"</code></li>
+      </ul>
       <h3 id="section:utility-decode">.decode</h3>
       <p>Decode data.</p>
-      <h4 id="section:utility-encode-base64">.decode.base64()</h4>
-      <p>Convert Base64 string to normal string.</p>
-      <h4 id="section:utility-encode-url">.decode.url()</h4>
-      <p>Decode URL.</p>
-      <h4 id="section:utility-encode-json">.decode.json()</h4>
-      <p>Convert JSON string to object.</p>
-      <h4 id="section:utility-encode-s">.decode.s()</h4>
+      <ul>
+        <li><code>.decode.base64()</code> &rarr; convert <strong>Base64</strong> string input to normal string</li>
+        <li><code>.decode.url()</code> &rarr; decode <abbr title="Unoform Resource Locator">URL</abbr> special characters</li>
+        <li><code>.decode.json()</code> &rarr; convert JSON string to object</li>
+        <li><code>.decode.data()</code> &rarr; convert string to their appropriate type/format; example, convert <code>"true"</code> to <code>true</code></li>
+      </ul>
       <p>Convert string to their appropriate type/format. Example, convert <code>"true"</code> to <code>true</code>.</p>
       <h3 id="section:utility-path">.path</h3>
       <p>Return the base path of current script.</p>
@@ -494,7 +489,9 @@ o = $.extend(o, {
       <h3 id="section:utility-plug">.plug</h3>
       <p>See <a href="#section:extend">#section:extend</a>.</p>
       <h3 id="section:utility-keys">.keys</h3>
+      <p>List of character value from the deprecated <code>KeyboardEvent.keyCode</code> in lower case mode based on <code>KeyboardEvent.key</code> values.</p>
       <h3 id="section:utility-keys_alias">.keys_alias</h3>
+      <p>List of alternative characters from <code>$.keys</code>.</p>
       <h3 id="section:utility-key">.event()</h3>
       <p>Normalize current JavaScript events.</p>
       <pre><code>$('button')[0].onclick = function(e) {
