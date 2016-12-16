@@ -129,7 +129,7 @@
     function arr(x) {
         var o = [];
         return each(x, function(v) {
-            v && o.push(is_plain_object(v) ? arr(v) : v);
+            o.push(is_plain_object(v) ? arr(v) : v);
         }), o;
     }
 
@@ -286,7 +286,7 @@
                         } else {
                             data_set(em, j, v);
                         }
-                    }$.el('div',false,{'class':'foo',html:$.el('a','foo',{foo:'bar'})});
+                    }
                 } else if (i === 'css') {
                     if (is_string(v)) {
                         attr_set(em, 'style', v);
