@@ -1016,10 +1016,14 @@
                 } else {
                     target = scope[qsa](target);
                 }
+            } else if (is_dom(target)) {
+                target = [target];
             } else if (!target) {
                 target = [];
-            } else {
-                target = [target];
+            } else if (target === win) {
+                target = [win];
+            } else if (target === doc) {
+                target = [doc];
             }
             target = arr_unique(to_array(target));
             target.query = [target_o, scope_o || null];
