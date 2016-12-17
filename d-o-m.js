@@ -647,7 +647,7 @@
 
     (function($, $$) {
 
-        $.version = '1.0.1';
+        $.version = '1.0.2';
         $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // element(s)
@@ -911,6 +911,13 @@
         $.keys = keys;
         $.keys_alias = keys_alias;
 
+        $.events = {
+            set: event_set,
+            reset: event_reset,
+            fire: event_fire,
+            x: event_exit
+        };
+
         // add `KeyboardEvent.DOM` property
         $.event = function(e) {
             // custom `KeyboardEvent.key` for internal use
@@ -1009,10 +1016,10 @@
                 } else {
                     target = scope[qsa](target);
                 }
-            } else if (is_dom(target)) {
-                target = [target];
             } else if (!target) {
                 target = [];
+            } else {
+                target = [target];
             }
             target = arr_unique(to_array(target));
             target.query = [target_o, scope_o || null];

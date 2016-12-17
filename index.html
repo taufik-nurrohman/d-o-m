@@ -477,14 +477,16 @@ o = $.extend(o, {
       <h3 id="section:utility-ready">.ready()</h3>
       <p>Bind an event handler to the <code>DOMContentLoaded</code> JavaScript event.</p>
       <pre><code>$.ready(function() {
+    // `this` refers to `document`
     alert('DOM is ready!');
 });</code></pre>
       <h3 id="section:utility-load">.load()</h3>
       <p>Bind an event handler to the <code>load</code> JavaScript event.</p>
       <pre><code>$.load(function() {
+    // `this` refers to `document`
     alert('DOM is fully loaded!');
 });</code></pre>
-      <h3 id="section:utility-noop">.noop</h3>
+      <h3 id="section:utility-noop">.noop()</h3>
       <p>Empty function.</p>
       <h3 id="section:utility-plug">.plug</h3>
       <p>See <a href="#section:extend">#section:extend</a>.</p>
@@ -615,7 +617,7 @@ o = $.extend(o, {
               <li><a href="#section:utility-path"><code>.path</code></a></li>
               <li><a href="#section:utility-ready"><code>.ready()</code></a></li>
               <li><a href="#section:utility-load"><code>.load()</code></a></li>
-              <li><a href="#section:utility-noop"><code>.noop</code></a></li>
+              <li><a href="#section:utility-noop"><code>.noop()</code></a></li>
               <li><a href="#section:utility-plug"><code>.plug</code></a></li>
               <li><a href="#section:utility-keys"><code>.keys</code></a></li>
               <li><a href="#section:utility-keys_alias"><code>.keys_alias</code></a></li>
