@@ -355,6 +355,8 @@
             'readonly': prop_readonly,
             'select': 'selected',
             'tabindex': prop_tabindex,
+            'auto-focus': 'autofocus',
+            'auto-complete': 'autocomplete',
             'content-edit': prop_contenteditable,
             'content-editable': prop_contenteditable,
             'design-mode': prop_designmode,
@@ -1160,7 +1162,6 @@
                 }, 1);
                 return count(o) ? o : (is_set(f) ? f : []);
             },
-            events: $$.noop,
             traverse: function(s) {
                 var o = [];
                 t = is_function(s);
@@ -1419,7 +1420,7 @@
             }
         });
 
-        extend(target.events, {
+        extend(target.events = function() {}, {
             set: function(event, fn) {
                 var a = $$.id.f,
                     b = target.id,
@@ -1466,8 +1467,8 @@
                 d = function(e) {
                     s = e.target;
                     t = query(get, this);
-                    if (has(t, s) !== -1 || (u = do_instance(s)) && has(t, u.closest(get)[0]) !== -1) {
-                        return fn.call(do_instance(s), e);
+                    if (has(t, s) !== -1 || (u = do_instance(s)) && has(t, u = u.closest(get)[0]) !== -1) {
+                        return fn.call(u || do_instance(s), e);
                     }
                 };
                 return target.events.set(event, d);

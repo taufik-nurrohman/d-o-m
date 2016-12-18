@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <title>Test</title>
     <script src="../d-o-m.min.js"></script>
+    <style>mark{margin:0 .125em}</style>
   </head>
   <body>
-    <p><button>click to <em>clone</em></button> some text </p>
+    <p><mark>click to <em>clone</em></mark> some text</p>
     <script>
-    $('p').events.capture("click", 'button', function() {
+    $('p').events.capture("click", 'mark', function() {
         $(this).parent().append($(this).copy());
     });
     </script>
