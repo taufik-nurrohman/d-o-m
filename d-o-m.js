@@ -1105,29 +1105,29 @@
             range: function(a, b) {
                 return do_instance(target.slice(a, b));
             },
-            set: function(a, b) {
+            set: function(a, b, x) {
                 t = is_function(b);
                 if (is_object(a)) {
                     for (i in a) {
-                        target.set(i, a);
+                        target.set(i, a, x);
                     }
                     return target;
                 }
                 return each(target, function(v, k, s) {
                     v[prop(a)] = t ? b.call(v, k, s) : b;
-                    do_fire_input(v);
+                    !x && do_fire_input(v);
                 }, 1);
             },
-            reset: function(a) {
+            reset: function(a, x) {
                 if (is_array(a)) {
                     for (i = 0, j = count(a); i < j; ++i) {
-                        target.reset(a[i]);
+                        target.reset(a[i], x);
                     }
                     return target;
                 }
                 return each(target, function(v) {
                     delete v[prop(a)];
-                    do_fire_input(v);
+                    !x && do_fire_input(v);
                 }, 1);
             },
             get: function(a, b) {
@@ -1252,7 +1252,7 @@
                     if (!attr_get(t, 'value') && v === 'on') v = true;
                     return !t.disabled && decode_value(v === 0 ? 0 : (v || ""));
                 }
-                return target.set('value', s);
+                return target.set('value', s, 1);
             },
             copy: function(s) {
                 return do_instance(dom_copy(target[0], s));
