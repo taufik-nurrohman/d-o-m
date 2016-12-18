@@ -442,7 +442,7 @@
             return count_object(o) ? (is_plain_object(b) ? extend(b, o) : o) : (is_set(b) ? b : {});
         }
         if (is_string(a)) {
-            return attr_get(node, [a], [is_set(b) ? b : ""])[0];
+            return attr_get(node, ['data-' + a], [is_set(b) ? b : ""])[0];
         }
         o = [];
         for (i in a) {
