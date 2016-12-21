@@ -223,7 +223,7 @@
     function extend(a, b) {
         b = b || {};
         for (i in b) {
-            if (is_plain_object(a[i]) && is_plain_object(b[i])) {
+            if (is_plain_object(a[i]) || is_array(a[i]) && is_plain_object(b[i]) || is_array(b[i])) {
                 a[i] = extend(a[i], b[i]);
             } else {
                 a[i] = b[i];
@@ -649,7 +649,7 @@
 
     (function($, $$) {
 
-        $.version = '1.0.2';
+        $.version = '1.0.3';
         $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // element(s)
