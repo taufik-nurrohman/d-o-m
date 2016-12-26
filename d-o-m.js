@@ -649,7 +649,7 @@
 
     (function($, $$) {
 
-        $.version = '1.0.3';
+        $.version = '1.0.4';
         $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // element(s)
@@ -661,7 +661,6 @@
         $.el = el;
         $.extend = extend;
         $.has = has;
-        $.noop = function() {};
         $.plug = {};
 
         function hook_set(event, fn, id) {
