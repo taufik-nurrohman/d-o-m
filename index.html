@@ -171,18 +171,8 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
       <h4 id="section:method-events-set">.events.set()</h4>
       <p>Attach an event handler function for one or more events to the selected elements.</p>
       <pre><code>$('input').events.set("keydown", function(e) {
-    // Here, `e` will also hold a `DOM` property which normalizes
-    // and add support (if not yet supported) the `key` property.
-    // All `e.DOM.key()` values are in lower case mode &rarr; <a href="http://tovic.github.io/text-editor/text-editor#section:key" target="_blank">[read more]</a>
     // `this` refers to the current `$('button')` from the set.
 });</code></pre>
-      <ul>
-        <li><code>e.DOM.key()</code></li>
-        <li><code>e.DOM.control()</code></li>
-        <li><code>e.DOM.shift()</code></li>
-        <li><code>e.DOM.option()</code></li>
-        <li><code>e.DOM.meta()</code></li>
-      </ul>
       <pre><code>$('button').events.set("click", function() {
     alert('test click!');
     return false; // this will trigger `e.preventDefault()` internally
@@ -493,9 +483,9 @@ o = $.extend(o, {
       <h3 id="section:utility-keys_alias">.keys_alias</h3>
       <p>List of alternative characters from <code>$.keys</code>.</p>
       <h3 id="section:utility-key">.event()</h3>
-      <p>Normalize current JavaScript events.</p>
+      <p>Empty hook that will be applied to the first function parameter on every <abbr title="Hyper Text Markup Language">HTML</abbr> events.</p>
       <pre><code>$('button')[0].onclick = function(e) {
-    e = $.event(e); // will also add a `DOM` property as stable alternative to `key`
+    e = $.event(e);
 };</code></pre>
     </section>
     <aside>
