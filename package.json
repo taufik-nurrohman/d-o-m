@@ -1,0 +1,27 @@
+{
+  "name": "d-o-m",
+  "version": "1.0.4",
+  "description": "Just another JavaScript library, for modern browsers.",
+  "main": "d-o-m.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tovic/d-o-m.git"
+  },
+  "keywords": [
+    "dom",
+    "d-o-m",
+    "document",
+    "object",
+    "model",
+    "library"
+  ],
+  "author": "Taufik Nurrohman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tovic/d-o-m/issues"
+  },
+  "homepage": "https://tovic.github.com/d-o-m"
+}
