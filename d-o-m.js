@@ -12,6 +12,8 @@
         gebt = ge + 'sByTagName',
         qsa = 'querySelectorAll',
         attributes = 'attributes',
+        events = [],
+        plugs = {},
         DOM,
         DOM_NS_0 = DOM_NS[0],
         DOM_NS_1 = DOM_NS[1] || DOM_NS_0,
@@ -106,12 +108,8 @@
     }
 
     function trim(s, x) {
-        if (x === 0) {
-            return s[replace](/^[\s\uFEFF\xA0]+/, ""); // trim left
-        } else if (x === 1) {
-            return s[replace](/[\s\uFEFF\xA0]+$/, ""); // trim right
-        }
-        return s[replace](/^[\s\uFEFF\xA0]*|[\s\uFEFF\xA0]*$/g, "") // trim left and right
+        var n = 'trim';
+        return s[n + (x === 0 ? 'Left' : (x === 1 ? 'Right' : ""))]();
     }
 
     function uid(s) {
@@ -348,6 +346,7 @@
             'class': 'className',
             'designmode': prop_designmode,
             'disable': 'disabled',
+            'editable': prop_contenteditable,
             'for': 'htmlFor',
             'hide': 'hidden',
             'maxlength': prop_maxlength,
@@ -649,7 +648,7 @@
 
     (function($, $$) {
 
-        $.version = '1.0.4';
+        $.version = '1.1.0';
         $[DOM_NS_1] = true; // just for test: `if (typeof $ === "function" && $.DOM) { … }`
         $.id = {
             e: {}, // element(s)
@@ -661,7 +660,14 @@
         $.el = el;
         $.extend = extend;
         $.has = has;
-        $.plug = {};
+        $.plug = function(k, fn) {
+            plugs[k] = fn;
+            return $;
+        };
+        $.eject = function(k) {
+            delete plugs[k];
+            return $;
+        };
 
         function hook_set(event, fn, id) {
             o = $.id.h;
@@ -786,8 +792,8 @@
             x: event_exit
         };
 
-        $.event = function(e) {
-            return e;
+        $.event = function(fn) {
+            events.push(fn);
         };
 
     })(win[DOM_NS_0] = win[DOM_NS_1] = function(target, scope) {
@@ -795,6 +801,13 @@
         return do_instance(target, scope);
 
     }, DOM = function(target, scope) {
+
+        function _events(e) {
+            for (var i = 0, j = events.length; i < j; ++i) {
+                e = extend(e, events[i](e));
+            }
+            return e;
+        }
 
         var $ = this,
             $$ = win[DOM_NS_1];
@@ -1247,7 +1260,7 @@
                 }
                 return each(target, function(v) {
                     d = function(e) {
-                        e = $$.event(e);
+                        e = _events(e);
                         x = is_function(fn) ? fn.call(v, e) : fn;
                         if (x === false) return event_exit(e);
                     }
@@ -1266,7 +1279,7 @@
                         }, 1);
                     // } else {
                     //     d = function(e) {
-                    //         e = $$.event(e);
+                    //         e = _events(e);
                     //         x = is_function(fn) ? fn.call(v, e) : fn;
                     //         if (x === false) return event_exit(e);
                     //     }
@@ -1292,10 +1305,10 @@
             }
         });
 
-        // plugin API
-        for (i in $$.plug) {
+        // Plugin API
+        for (i in plugs) {
             target[i] = function() {
-                return $$.plug[i].apply(target, arguments);
+                return plugs[i].apply(target, arguments);
             };
         }
 

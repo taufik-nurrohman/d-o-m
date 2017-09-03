@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="../d-o-m.min.js"></script>
+  </head>
+  <body>
+    <h1>heading 1</h1>
+    <script>
+    $.plug('red', function() {
+        return this.css('color', 'red');
+    });
+    $('h1').red();
+    </script>
+  </body>
+</html>

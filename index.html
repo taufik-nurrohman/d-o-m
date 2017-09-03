@@ -35,12 +35,19 @@
       <p>Configuration is not available.</p>
       <h2 id="section:extend">Extend</h2>
       <p>Create a new method:</p>
-      <pre><code>$.plug.red = function() {
+      <pre><code>$.plug('red', function() {
     // `this` refers to the DOM object
     return this.css('color', 'red');
-};</code></pre>
+});</code></pre>
       <p>Usage:</p>
       <pre><code>$('div').red();</code></pre>
+      <p>Delete a method:</p>
+      <pre><code>$.eject('red');</code></pre>
+      <h2 id="section:extension">Extensions</h2>
+      <ul>
+        <li><a href="d-o-m/extension.ajax.html">AJAX</a></li>
+        <li><a href="d-o-m/extension.event.key.html">Keyboard Event</a></li>
+      </ul>
       <h2 id="section:method">Methods</h2>
       <p>Initialize a <em>DOM</em> instance with <code>$(<var>selector</var>[, <var>context</var>])</code> or <code>DOM(<var>selector</var>[, <var>context</var>])</code>. Both are the same. <code>window.$</code> is just an alias for <code>window.DOM</code>.</p>
       <pre><code>$('#foo');</code></pre>
@@ -101,7 +108,7 @@ $headers = $headers.$('h5, h6'); // `$headers` is now `[&lt;h1&gt;, &lt;h2&gt;, 
 });</code></pre>
       <blockquote>
         <p>Property <code>check</code> is just an alias for property <code>checked</code>. Some attributes need to have their own aliases because of the inconsistencies between JavaScript and <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> syntax.</p>
-        <p><strong>Example:</strong> A comparison between <code>spellcheck</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>spellcheck</code> in JavaScript and <code>readonly</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>readOnly</code> in JavaScript.</p>
+        <p><strong>Example:</strong> A comparison between <code>spellcheck</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>spellCheck</code> in JavaScript and <code>readonly</code> in <abbr title="Hyper Text Markup Language">HTML</abbr>/<abbr title="Cascading Style Sheet">CSS</abbr> with <code>readOnly</code> in JavaScript.</p>
       </blockquote>
       <h3 id="section:method-reset">.reset()</h3>
       <p>Remove one or more properties for the set of matched elements.<sup><a href="d-o-m/reset.html" target="_blank">&#8599;</a></sup></p>
@@ -402,12 +409,12 @@ o = $.extend(o, {
       <p>Trigger <code>on.create</code> hook with ID <code>main</code>.</p>
       <pre><code>$.hooks.fire("on.create", [ &hellip; ], 'main');</code></pre>
       <h3 id="section:utility-trim">.trim()</h3>
-      <p>Remove white&ndash;spaces at the beginning and end of a string.</p>
+      <p>Remove white-spaces at the beginning and end of a string.</p>
       <pre><code>$.trim('    lorem ipsum dolor sit amet\r\n');</code></pre>
       <h4 id="section:utility-trim-before">.trim.before()</h4>
-      <p>Remove white&ndash;spaces at the beginning of a string.</p>
+      <p>Remove white-spaces at the beginning of a string.</p>
       <h4 id="section:utility-trim-after">.trim.after()</h4>
-      <p>Remove white&ndash;spaces at the end of a string.</p>
+      <p>Remove white-spaces at the end of a string.</p>
       <h3 id="section:utility-is">.is</h3>
       <p>Data type checks.</p>
       <ul>
@@ -461,7 +468,6 @@ o = $.extend(o, {
         <li><code>.decode.json()</code> &rarr; convert JSON string to object</li>
         <li><code>.decode.data()</code> &rarr; convert string to their appropriate type/format; example, convert <code>"true"</code> to <code>true</code></li>
       </ul>
-      <p>Convert string to their appropriate type/format. Example, convert <code>"true"</code> to <code>true</code>.</p>
       <h3 id="section:utility-path">.path</h3>
       <p>Return the base path of current script.</p>
       <h3 id="section:utility-ready">.ready()</h3>
@@ -478,15 +484,14 @@ o = $.extend(o, {
 });</code></pre>
       <h3 id="section:utility-plug">.plug</h3>
       <p>See <a href="#section:extend">#section:extend</a>.</p>
-      <h3 id="section:utility-keys">.keys</h3>
-      <p>List of character value from the deprecated <code>KeyboardEvent.keyCode</code> in lower case mode based on <code>KeyboardEvent.key</code> values.</p>
-      <h3 id="section:utility-keys_alias">.keys_alias</h3>
-      <p>List of alternative characters from <code>$.keys</code>.</p>
+      <h3 id="section:utility-eject">.eject</h3>
+      <p>See <a href="#section:extend">#section:extend</a>.</p>
       <h3 id="section:utility-key">.event()</h3>
-      <p>Empty hook that will be applied to the first function parameter on every <abbr title="Hyper Text Markup Language">HTML</abbr> events.</p>
-      <pre><code>$('button')[0].onclick = function(e) {
-    e = $.event(e);
-};</code></pre>
+      <p>Hooks that will be applied to the first function parameter on every <abbr title="Hyper Text Markup Language">HTML</abbr> events.</p>
+      <pre><code>$.event(function(e) {
+    e.test = true;
+    return e;
+});</code></pre>
     </section>
     <aside>
       <h3>Table of Content</h3>
@@ -495,6 +500,7 @@ o = $.extend(o, {
           <li><a href="#section:start">Start</a></li>
           <li><a href="#section:configure">Configure</a></li>
           <li><a href="#section:extend">Extend</a></li>
+          <li><a href="#section:extension">Extension</a></li>
           <li><a href="#section:method">Methods</a>
             <ul>
               <li><a href="#section:method-$"><code>.$()</code></a></li>
@@ -606,8 +612,7 @@ o = $.extend(o, {
               <li><a href="#section:utility-ready"><code>.ready()</code></a></li>
               <li><a href="#section:utility-load"><code>.load()</code></a></li>
               <li><a href="#section:utility-plug"><code>.plug</code></a></li>
-              <li><a href="#section:utility-keys"><code>.keys</code></a></li>
-              <li><a href="#section:utility-keys_alias"><code>.keys_alias</code></a></li>
+              <li><a href="#section:utility-eject"><code>.eject</code></a></li>
               <li><a href="#section:utility-event"><code>.event()</code></a></li>
             </ul>
           </li>
@@ -615,7 +620,7 @@ o = $.extend(o, {
       </nav>
     </aside>
     <footer>
-      <p>&copy; 2016 &middot; <a href="">Taufik Nurrohman</a></p>
+      <p>&copy; 2016 &ndash; 2017 &middot; <a href="">Taufik Nurrohman</a></p>
     </footer>
   </body>
 </html>

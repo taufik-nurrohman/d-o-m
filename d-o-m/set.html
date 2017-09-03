@@ -14,12 +14,12 @@
       <input type="checkbox">
     </p>
     <p>
-      <button onclick="$('input').attributes.set('check', true);">check all (no fire events)</button>
-      <button onclick="$('input').attributes.reset('check');">uncheck all (no fire events)</button>
+      <button onclick="$('input').attributes.set('checked', true);">check all (no fire events)</button>
+      <button onclick="$('input').attributes.reset('checked');">uncheck all (no fire events)</button>
     </p>
     <p>
-      <button onclick="$('input').set('check', true);">check all</button>
-      <button onclick="$('input').set('check', false);">uncheck all</button>
+      <button onclick="$('input').set('checked', true);">check all</button>
+      <button onclick="$('input').set('checked', false);">uncheck all</button>
     </p>
     <script>
     $('input').events.set("change", function() {
